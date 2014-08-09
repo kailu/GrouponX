@@ -49,7 +49,7 @@ def createConfigure(request):
                                     white_list = '',
                                     traffic_percentage = 0,
                                     bidding_approach = 0,
-                                    layout_option = 0)
+                                    layout_approach = 0)
             c.save()
             response_data['data'] = model_to_dict(c)
             
