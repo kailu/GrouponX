@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.forms import UserCreationForm
 
 # Create your models here.
 
@@ -6,6 +7,23 @@ from django.db import models
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django import forms
+
+
+class RegistrationForm(UserCreationForm):
+    domain = forms.CharField(max_length=255, required=True)
+
+    def save(self, commit=True):
+        if not commit:
+            raise NotImplementedError("Can't create User and UserProfile without database save")
+        user = super(RegistrationForm, self).save(commit=True)
+        return user
+
+
+class Site(models.Model):
+    user = models.OneToOneField(User)
+    DOMAIN = models.CharField(max_length=255)
+    hash = models.CharField(max_length=255)
 
 
 class PageEntity(models.Model):
