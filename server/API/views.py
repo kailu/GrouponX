@@ -108,6 +108,8 @@ def saveConfigure(request):
                 black_list = request.POST.get('black_list',None)
                 bidding_approach = request.POST.get('bidding',None)
                 layout_option = request.POST.get('layout',None)
+                name = request.POST.get('name',None)
+
                 #parameter condition check            
                 if traffic_percentage != None:
                     c.traffic_percentage = traffic_percentage
@@ -119,6 +121,8 @@ def saveConfigure(request):
                     c.bidding_approach = bidding_approach
                 if layout_option != None:
                     c.layout_approach = layout_option
+                if name != None:
+                    c.name = name
 
                 c.save()
             except Exception as inst:
