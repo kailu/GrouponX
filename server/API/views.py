@@ -18,10 +18,113 @@ import dianping
 import utils
 import json
 import models
+from django.forms.models import model_to_dict
 
 
 def index(request):
     return HttpResponse("hello, world!")
+
+
+def createConfigure(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    if request.method == 'GET':
+        page_id = request.GET.get('p_id', None)
+
+        if page_id == None:
+            response_data['status'] = 'no'
+            response_data['error'] = 'no page id specified!'
+        else:
+            c = models.ConfigEntity(page = page_id,
+                                    black_list = '',
+                                    white_list = '',
+                                    traffic_percentage = 0,
+                                    bidding_approach = 0,
+                                    layout_option = 0)
+            c.save()
+            response_data['data'] = model_to_dict(c)
+            
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def readConfigure(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    c_id = request.GET.get('c_id',None)
+    if c_id != None:
+        try:
+            conf = ConfigEntity.objects.get(pk = c_id)
+            response_data['data'] = model_to_dict(conf)
+        except Exception as error:
+            response_data['status'] = 'no'
+            response_data['error'] = str(error)
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def saveConfigure(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'yes'
+
+    if request.method != 'POST':
+            response_data['status'] = 'no'
+            response_data['error'] = 'This api only support POST call!'
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+
+    page_id = request.POST.get('p_id', None)
+    configure_id = request.POST.get('c_id', None)
+    if page_id != None:
+        if configure_id == None:
+            #create a new one
+            response_data['status'] = 'no'
+            response_data['error'] = 'configure id does not exist!'
+        else:
+            try:
+                c = models.ConfigEntity.objects.get(page = page_id)
+
+                traffic_percentage = request.POST.get('traffic',None)
+                white_list = request.POST.get('white_list',None)
+                black_list = request.POST.get('black_list',None)
+                bidding_approach = request.POST.get('bidding',None)
+                layout_option = request.POST.get('layout',None)
+                #parameter condition check            
+                if traffic_percentage != None:
+                    c.traffic_percentage = traffic_percentage
+                if white_list != None:
+                    c.white_list = white_list
+                if black_list != None:
+                    c.black_list = black_list
+                if bidding_approach != None:
+                    c.bidding_approach = bidding_approach
+                if layout_option != None:
+                    c.layout_approach = layout_option
+
+                c.save()
+            except Exception as inst:
+                #doesn't exist such configure for this page, return error code to client
+                response_data['status'] = 'no'
+                response_data['error']  = str(inst)
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'Page id must be assigned!'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    
 
 
 @login_required(login_url='/api/login/')
@@ -33,6 +136,8 @@ def configure(request):
     """
     response_data = {}
     response_data['status'] = 'yes'
+
+        
 
     if request.method != 'POST':
             response_data['status'] = 'no'
@@ -148,6 +253,50 @@ def createPageID(request):
     - `request`:
     """
     pass
+
+@login_required(login_url='/api/login/')
+def createPage(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    
+    name = request.GET.get('name',None)
+    if name == None:
+        response_data['status'] = 'no'
+        response_data['error'] = 'need a name for page!'
+    else:
+        page = models.PageEntity(user = request.user,
+                                 name = name,
+                                 pagename = '')
+        page.save()
+        d = {}
+        d['p_id'] = page.id
+        response_data['data'] = d
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def readPage(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    p_id = request.GET.get('p_id',None)
+    if p_id != None:
+        d = []
+        configs = models.ConfigEntity.objects.filter(page=p_id)
+        for c in configs:
+            d.append(model_to_dict(c))
+        response_data['data'] = d
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 
 def testAPI(request):
