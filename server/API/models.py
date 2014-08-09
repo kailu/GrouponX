@@ -22,7 +22,7 @@ class RegistrationForm(UserCreationForm):
 
 class Site(models.Model):
     user = models.OneToOneField(User)
-    DOMAIN = models.CharField(max_length=255)
+    domain = models.CharField(max_length=255)
     hash = models.CharField(max_length=255)
 
 
