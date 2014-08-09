@@ -22,7 +22,7 @@ class RegistrationForm(UserCreationForm):
 
 class Site(models.Model):
     user = models.OneToOneField(User)
-    DOMAIN = models.CharField(max_length=255)
+    domain = models.CharField(max_length=255)
     hash = models.CharField(max_length=255)
 
 
@@ -43,6 +43,7 @@ class PageEntity(models.Model):
 # 2 --- tempate 2
 class ConfigEntity(models.Model):
     page = models.ForeignKey(PageEntity)
+    name = models.CharField(max_length=100)
     black_list = models.CharField(max_length=1024)
     white_list = models.CharField(max_length=1024)
     traffic_percentage = models.FloatField(default = 1)

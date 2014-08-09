@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login,logout
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -7,8 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext as RC
 
 from django.shortcuts import render, render_to_response
-from models import RegistrationForm
+from django.http import HttpResponseRedirect
+from models import RegistrationForm, Site
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+import hashlib
 
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
@@ -18,10 +21,113 @@ import dianping
 import utils
 import json
 import models
+from django.forms.models import model_to_dict
 
 
 def index(request):
     return HttpResponse("hello, world!")
+
+
+def createConfigure(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    if request.method == 'GET':
+        page_id = request.GET.get('p_id', None)
+
+        if page_id == None:
+            response_data['status'] = 'no'
+            response_data['error'] = 'no page id specified!'
+        else:
+            c = models.ConfigEntity(page = page_id,
+                                    black_list = '',
+                                    white_list = '',
+                                    traffic_percentage = 0,
+                                    bidding_approach = 0,
+                                    layout_option = 0)
+            c.save()
+            response_data['data'] = model_to_dict(c)
+            
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def readConfigure(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    c_id = request.GET.get('c_id',None)
+    if c_id != None:
+        try:
+            conf = ConfigEntity.objects.get(pk = c_id)
+            response_data['data'] = model_to_dict(conf)
+        except Exception as error:
+            response_data['status'] = 'no'
+            response_data['error'] = str(error)
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def saveConfigure(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'yes'
+
+    if request.method != 'POST':
+            response_data['status'] = 'no'
+            response_data['error'] = 'This api only support POST call!'
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+
+    page_id = request.POST.get('p_id', None)
+    configure_id = request.POST.get('c_id', None)
+    if page_id != None:
+        if configure_id == None:
+            #create a new one
+            response_data['status'] = 'no'
+            response_data['error'] = 'configure id does not exist!'
+        else:
+            try:
+                c = models.ConfigEntity.objects.get(page = page_id)
+
+                traffic_percentage = request.POST.get('traffic',None)
+                white_list = request.POST.get('white_list',None)
+                black_list = request.POST.get('black_list',None)
+                bidding_approach = request.POST.get('bidding',None)
+                layout_option = request.POST.get('layout',None)
+                #parameter condition check            
+                if traffic_percentage != None:
+                    c.traffic_percentage = traffic_percentage
+                if white_list != None:
+                    c.white_list = white_list
+                if black_list != None:
+                    c.black_list = black_list
+                if bidding_approach != None:
+                    c.bidding_approach = bidding_approach
+                if layout_option != None:
+                    c.layout_approach = layout_option
+
+                c.save()
+            except Exception as inst:
+                #doesn't exist such configure for this page, return error code to client
+                response_data['status'] = 'no'
+                response_data['error']  = str(inst)
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'Page id must be assigned!'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    
 
 
 @login_required(login_url='/api/login/')
@@ -33,6 +139,8 @@ def configure(request):
     """
     response_data = {}
     response_data['status'] = 'yes'
+
+        
 
     if request.method != 'POST':
             response_data['status'] = 'no'
@@ -94,30 +202,62 @@ def register(request):
     pass
 
 
-def login(request):
+def login_(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                print("User is valid, active and authenticated")
+                print "domain: ", user.site.domain
+                return HttpResponseRedirect('../page/')
+            else:
+                print("The password is valid, but the account has been disabled!")
+        else:
+            # the authentication system was unable to verify the username and password
+            print("The username and password were incorrect.")
+    else:
+        form = AuthenticationForm()
+        return render_to_response(
+            'registration/login.html',
+            { 'form' : form},
+            context_instance=RC(request, {}),
+    )
+
+
+def logout_(request):
+    logout(request)
     return render_to_response(
-        'registration/login.html',
+        'index.html',
         {},
         context_instance=RC(request, {}),
     )
-
 
 def register(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password1']
+        domain = request.POST['domain']
+        print "=== User: ", username, " password: ", password, 'domain: ', domain
+
         new_user = User.objects.create_user(username, '', password)
+
+        hasher = hashlib.md5()
+        hasher.update(username + domain)
+        h = hasher.hexdigest()
+        site = Site(user=new_user, hash=h, domain=domain)
+        site.save()
         new_user.save()
-        print "=== User: ", username, " password: ", password
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
+                login(request, user)
                 print("User is valid, active and authenticated")
-                return render_to_response(
-                'configure/index.html',
-                {},
-                context_instance=RC(request, {}),
-    )
+                print "domain: ", user.site.domain
+                return HttpResponseRedirect('../page/')
             else:
                 print("The password is valid, but the account has been disabled!")
         else:
@@ -148,6 +288,50 @@ def createPageID(request):
     - `request`:
     """
     pass
+
+@login_required(login_url='/api/login/')
+def createPage(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    
+    name = request.GET.get('name',None)
+    if name == None:
+        response_data['status'] = 'no'
+        response_data['error'] = 'need a name for page!'
+    else:
+        page = models.PageEntity(user = request.user,
+                                 name = name,
+                                 pagename = '')
+        page.save()
+        d = {}
+        d['p_id'] = page.id
+        response_data['data'] = d
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def readPage(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+    p_id = request.GET.get('p_id',None)
+    if p_id != None:
+        d = []
+        configs = models.ConfigEntity.objects.filter(page=p_id)
+        for c in configs:
+            d.append(model_to_dict(c))
+        response_data['data'] = d
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 
 def testAPI(request):
@@ -203,10 +387,12 @@ def _getDianpingDealsByIP(ipstr):
 
     
 def page(request):
+    print '==', request.user.is_authenticated()
+
     return render_to_response(
         'configure/index.html',
         {},
-        context_instance=RC(request, {}),
+        context_instance=RC(request, { 'user' : request.user}),
     )
     
 
