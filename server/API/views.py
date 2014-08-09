@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate,login,logout
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -7,8 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext as RC
 
 from django.shortcuts import render, render_to_response
-from models import RegistrationForm
+from django.http import HttpResponseRedirect
+from models import RegistrationForm, Site
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+import hashlib
 
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
@@ -42,30 +45,62 @@ def register(request):
     pass
 
 
-def login(request):
+def login_(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                print("User is valid, active and authenticated")
+                print "domain: ", user.site.domain
+                return HttpResponseRedirect('../page/')
+            else:
+                print("The password is valid, but the account has been disabled!")
+        else:
+            # the authentication system was unable to verify the username and password
+            print("The username and password were incorrect.")
+    else:
+        form = AuthenticationForm()
+        return render_to_response(
+            'registration/login.html',
+            { 'form' : form},
+            context_instance=RC(request, {}),
+    )
+
+
+def logout_(request):
+    logout(request)
     return render_to_response(
-        'registration/login.html',
+        'index.html',
         {},
         context_instance=RC(request, {}),
     )
-
 
 def register(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password1']
+        domain = request.POST['domain']
+        print "=== User: ", username, " password: ", password, 'domain: ', domain
+
         new_user = User.objects.create_user(username, '', password)
+
+        hasher = hashlib.md5()
+        hasher.update(username + domain)
+        h = hasher.hexdigest()
+        site = Site(user=new_user, hash=h, domain=domain)
+        site.save()
         new_user.save()
-        print "=== User: ", username, " password: ", password
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
+                login(request, user)
                 print("User is valid, active and authenticated")
-                return render_to_response(
-                'configure/index.html',
-                {},
-                context_instance=RC(request, {}),
-    )
+                print "domain: ", user.site.domain
+                return HttpResponseRedirect('../page/')
             else:
                 print("The password is valid, but the account has been disabled!")
         else:
@@ -151,10 +186,12 @@ def _getDianpingDealsByIP(ipstr):
 
     
 def page(request):
+    print '==', request.user.is_authenticated()
+
     return render_to_response(
         'configure/index.html',
         {},
-        context_instance=RC(request, {}),
+        context_instance=RC(request, { 'user' : request.user}),
     )
     
 
