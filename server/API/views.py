@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.template import RequestContext as RC
 
 from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt
@@ -12,6 +13,7 @@ import baidu
 import dianping
 import utils
 import json
+
 
 def index(request):
     return HttpResponse("hello, world!")
@@ -35,13 +37,29 @@ def register(request):
     """
     pass
 
+
 def login(request):
-    """
-    
-    Arguments:
-    - `request`:
-    """
-    pass
+    return render_to_response(
+        'registration/login.html',
+        {},
+        context_instance=RC(request, {}),
+    )
+
+
+def register(request):
+    return render_to_response(
+        'registration/registration_form.html',
+        {},
+        context_instance=RC(request, {}),
+    )
+
+
+def pwd_reset(request):
+    return render_to_response(
+        'registration/pwd_reset_form.html',
+        {},
+        context_instance=RC(request, {}),
+    )
 
 
 @login_required(login_url='/api/login/')
@@ -89,7 +107,7 @@ def _getDianpingDealsByIP(ipstr):
         city = city.encode('utf-8')
         #call dianping API
         gpons = dianping.getGrouponByCity(city)
-        gpons =  utils.convert(gpons)
+        #gpons = utils.convert(gpons)
         return gpons
     except Exception as ex:
         print ex
