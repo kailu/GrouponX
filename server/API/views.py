@@ -43,7 +43,8 @@ def createConfigure(request):
             response_data['status'] = 'no'
             response_data['error'] = 'no page id specified!'
         else:
-            c = models.ConfigEntity(page = page_id,
+            p = models.PageEntity.objects.get(pk=page_id)
+            c = models.ConfigEntity(page = p,
                                     black_list = '',
                                     white_list = '',
                                     traffic_percentage = 0,
@@ -99,7 +100,8 @@ def saveConfigure(request):
             response_data['error'] = 'configure id does not exist!'
         else:
             try:
-                c = models.ConfigEntity.objects.get(page = page_id)
+                p = models.PageEntity.objects.get(pk = page_id)
+                c = models.ConfigEntity.objects.get(page = p)
 
                 traffic_percentage = request.POST.get('traffic',None)
                 white_list = request.POST.get('white_list',None)
