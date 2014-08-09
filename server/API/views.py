@@ -79,15 +79,25 @@ def testAPI(request):
     - `request`:
     """
     ipstr = request.GET.get('ip',None)
-    result = _getDianpingDealsByIP(ipstr)
     result_str = ""
-    if result != None:
-        for deal in result['deals']:
-            result_str += "<hr/>" + deal['title']
-            result_str += "<hr/>" + deal['image_url']
-            result_str += "<hr/>"
+    if ipstr != None:
+        result = _getDianpingDealsByIP(ipstr)
 
-    return HttpResponse(result_str)
+        if result != None:
+            for deal in result['deals']:
+                result_str += "<h1>" + deal['title'] + "</h1>"
+                result_str += "<hr/>" + deal['description']
+                result_str += "<hr/>" + str(deal['list_price'])
+                result_str += "<hr/>" + str(deal['current_price'])
+                result_str += "<hr/>" + deal['image_url']
+                result_str += "<hr/>"
+
+    return render_to_response(
+        'test/testapi.html',
+        {'result':result_str},
+        context_instance=RC(request, {}),
+    )
+
 
 
 def _getDianpingDealsByIP(ipstr):
@@ -114,5 +124,11 @@ def _getDianpingDealsByIP(ipstr):
         return None
 
     
-
+def page(request):
+    return render_to_response(
+        'configure/index.html',
+        {},
+        context_instance=RC(request, {}),
+    )
+    
 

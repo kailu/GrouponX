@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form method="get" action="/api/testapi">
+  {% csrf_token %}
+    Ip Address: <input type="text" name="ip"><br>
+
+
+  <input type="submit" value="{% trans 'Submit' %}" />
+  <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+{{ result }}
+
+{% endblock %}

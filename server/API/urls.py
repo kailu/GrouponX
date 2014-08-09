@@ -31,4 +31,5 @@ urlpatterns = patterns('',
     url(r'^testapi/', views.testAPI, name="testapi"),
     url(r'^register/', views.register, name="register"),
     url(r'^pwd_reset/', views.pwd_reset, name="pwd_reset"),
+    url(r'^page/',views.page, name="page"),
 )
