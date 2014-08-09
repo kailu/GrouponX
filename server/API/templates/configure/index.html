@@ -3,5 +3,257 @@
 {% load i18n %}
 
 {% block content %}
+<style>
+  .configuration-box {
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.2);
+    padding: 20px;
+    width: 800px;
+  }
+  
+  .page-box {
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.2);
+  }
 
+  .config-box {
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.2);
+  }
+
+  .section {
+    margin: 10px;
+    padding: 20px;
+  }
+
+  .section-header {
+    border-bottom: 1px black solid;
+    font-size: larger;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+  }
+
+  .radio-box {
+    margin-right: 10px;
+  }
+
+  .radio-box input {
+    margin-right: 10px;
+  }
+
+  .layout-box {
+    display: inline-block;
+    border: 1px black solid;
+    height: 50px;
+    width: 50px;
+  }
+</style>
+
+<div class="configuration-box">
+  <div class="page-box">
+    
+  </div>
+  
+  <div class="config-box">
+    <!-- Bid strategy -->
+    <div class="section">
+      <div class="section-header">Bid Strategy</div>
+      <div>
+	<span class="radio-box">
+	  <input id="target" type="radio" name="strategy" value="0">Bid Strategy 1
+	</span>
+      </div>
+      <div>
+	<span class="radio-box">
+	  <input type="radio" name="strategy" value="1">Bid Strategy 2
+	</span>
+      </div>
+    </div>
+    
+    <!-- Black/White list -->
+    <div class="section">
+      <div class="section-header">Site control</div>
+      <div id="whitelist">
+	<span class="radio-box">
+	  <input type="radio" name="listing" value="whitelist">Whitelist
+	</span>
+	<input type="text" size="120">
+      </div>
+      <div id="blacklist">
+	<span class="radio-box">
+	  <input type="radio" name="listing" value="blacklist">Blacklist
+	</span>
+	<input type="text" size="120 disabled">
+      </div>
+    </div>
+    
+    <!-- Layout option -->
+    <div class="section">
+      <div class="section-header">Layout</div>
+      <div>
+	<span class="radio-box">
+	  <input type="radio" name="layout" value="0">Single
+	</span>
+      </div>
+      <div>
+	<span class="radio-box">
+	  <input type="radio" name="layout" value="1">Multiple
+	</span>
+      </div>
+      <div>
+	<span class="radio-box">
+	  <input type="radio" name="layout" value="2">Many
+	</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var fakeConfig1 = {
+    "bid_strategy": 0,
+    "whitelist": "whitelist_site_1",
+    "blacklist": "",
+    "layout": 0
+  }
+
+  var fakeConfig2 = {
+    "bid_strategy": 0,
+    "whitelist": "whitelist_site_1, whitelist_site_2",
+    "blacklist": "",
+    "layout": 1
+  }
+
+  var fakeConfig3 = {
+    "bid_strategy": 0,
+    "whitelist": "",
+    "blacklist": "blacklist_site_1",
+    "layout": 0
+  }
+
+  function createPage() {
+    var fakeCreatePageResposne = {
+      "status": "ok",
+      "data": {
+        "p_id": "0",
+      },
+      "error": ""
+    }
+  }
+
+  function readPageList() {
+    var fakeReadPageListResponse = {
+      "status": "ok",
+      "data": [
+      
+      ],
+      "error": ""
+    }
+  }
+
+  function readPage(page) {
+    var fakeReadPageResponse = {
+      "status": "ok",
+      "data": [
+        {
+          "name": "Configuration 1",
+          "traffic": "10",
+          "data" : fakeConfig1
+        },
+        {
+          "config_name": "Configuration 2",
+          "traffic": "20",
+          "data" : fakeConfig2
+        },
+        {
+          "config_name": "Configuration 3",
+          "traffic": "70",
+          "data" : {
+            "bid_strategy": 1,
+            "whitelist": "",
+            "blacklist": "blacklist_site_1",
+            "layout": 2
+          }
+        }
+      ],
+      "error": ""
+    };
+  }
+
+  function savePage(page) {
+
+  }
+
+  function createConfig(page) {
+    var fakeCreateConfigResponse = {
+      "status": "ok",
+      "data": {
+        "id": 0,
+        "bid_strategy": 0,
+        "whitelist": "whitelist_site_1, whitelist_site_2",
+        "blacklist": "",
+        "layout": 0
+      },
+      "error": ""
+    }
+  }
+
+  function enableAndSetList(list_name, val) {
+    $("input[name='listing'][value='" + list_name + "']").prop("checked", true);
+    $("#" + list_name + " input[type='text']").val(val);
+  }
+
+  function disableList(list_name) {
+      $("#" + list_name + " input[type='text']").prop("disabled", true);
+  }
+
+  function loadConfig(config) {
+    // Select strategy
+    $("input[name='strategy'][value='" + config.bid_strategy + "']").prop("checked", true);
+
+    // Select whitelist
+    if (!config.blacklist) {
+      enableAndSetList("whitelist", config.whitelist);
+      disableList("blacklist");
+    } else {
+      enableAndSetList("blacklist", config.blacklist);
+      disableList("whitelist");
+    }
+
+    // Select layout
+    $("input[name='layout'][value='" + config.layout + "']").prop("checked", true)
+  }
+
+  function saveConfig(page, config) {
+
+  }
+
+  var fakeReadPageListReponse = [
+    {
+      "name": "Config 1",
+      "traffic": "10"
+    },
+    {
+      "name": "Config 2",
+      "traffic": "20"
+    },
+    {
+      "name": "Config 3",
+      "traffic": "70"
+    }
+  ]
+
+  var fakeConfigResponse = {
+    "status": "ok",
+    "data": {
+      "bid_strategy": 1,
+      "whitelist": "white_list_site_1, white_list_site_2",
+      "blacklist": "",
+      "layout": 0
+    },
+    "error": ""
+  };
+
+  
+
+  var fakeConfig = fakeConfigResponse.data;
+  loadConfig(fakeConfig);
+</script>
 {% endblock %}
