@@ -32,4 +32,5 @@ urlpatterns = patterns('',
     url(r'^register/', views.register, name="register"),
     url(r'^pwd_reset/', views.pwd_reset, name="pwd_reset"),
     url(r'^page/',views.page, name="page"),
+    url(r'^getdeals', views.getdeals, name='getdeals'),
 )

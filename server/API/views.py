@@ -210,3 +210,23 @@ def page(request):
     )
     
 
+def getdeals(request):
+    ipstr = request.GET.get('ip',None)
+    response_data = {}
+    response_data['status'] = 'ok'
+    result_str = ""
+    if ipstr != None:
+        result = _getDianpingDealsByIP(ipstr)
+        if result != None:
+            response_data['data'] = result['deals']
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        else:
+            response_data['status'] = 'no'
+            response_data['error'] = 'can not fetch data from backend!'
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'No IP has been specified!'
+        
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+        
