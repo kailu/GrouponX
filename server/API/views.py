@@ -15,6 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 import baidu
 import dianping
+import utils
+import json
 
 
 def index(request):
@@ -91,6 +93,34 @@ def createPageID(request):
     pass
 
 
+def testAPI(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    ipstr = request.GET.get('ip',None)
+    result_str = ""
+    if ipstr != None:
+        result = _getDianpingDealsByIP(ipstr)
+
+        if result != None:
+            for deal in result['deals']:
+                result_str += "<h1>" + deal['title'] + "</h1>"
+                result_str += "<hr/>" + deal['description']
+                result_str += "<hr/>" + str(deal['list_price'])
+                result_str += "<hr/>" + str(deal['current_price'])
+                result_str += "<hr/>" + deal['image_url']
+                result_str += "<hr/>"
+
+    return render_to_response(
+        'test/testapi.html',
+        {'result':result_str},
+        context_instance=RC(request, {}),
+    )
+
+
+
 def _getDianpingDealsByIP(ipstr):
     """
     
@@ -99,17 +129,27 @@ def _getDianpingDealsByIP(ipstr):
     """
     d = baidu.getAddressByIP(ipstr)
     try:
+        d = json.loads(d)
         city = d['content']['address_detail']['city']
-        if city.endswith("\u市"):
+
+
+        if city.endswith(u"市"):
             city = city[:-1]
         city = city.encode('utf-8')
         #call dianping API
         gpons = dianping.getGrouponByCity(city)
         #gpons = utils.convert(gpons)
         return gpons
-    except:
+    except Exception as ex:
+        print ex
         return None
 
     
-
+def page(request):
+    return render_to_response(
+        'configure/index.html',
+        {},
+        context_instance=RC(request, {}),
+    )
+    
 

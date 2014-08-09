@@ -28,7 +28,8 @@ urlpatterns = patterns('',
     url(r'^configure/', views.configure, name="configure"),
     url(r'^createPageID', views.createPageID, name="createPageID"),
     url(r'^login/', views.login, name="login"),
+    url(r'^testapi/', views.testAPI, name="testapi"),
     url(r'^register/', views.register, name="register"),
     url(r'^pwd_reset/', views.pwd_reset, name="pwd_reset"),
-
+    url(r'^page/',views.page, name="page"),
 )
