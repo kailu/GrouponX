@@ -61,6 +61,11 @@ def register(request):
         if user is not None:
             if user.is_active:
                 print("User is valid, active and authenticated")
+                return render_to_response(
+                'configure/index.html',
+                {},
+                context_instance=RC(request, {}),
+    )
             else:
                 print("The password is valid, but the account has been disabled!")
         else:
