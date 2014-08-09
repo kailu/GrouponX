@@ -10,6 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 import baidu
 import dianping
+import utils
+import json
 
 def index(request):
     return HttpResponse("hello, world!")
@@ -52,6 +54,24 @@ def createPageID(request):
     pass
 
 
+def testAPI(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    ipstr = request.GET.get('ip',None)
+    result = _getDianpingDealsByIP(ipstr)
+    result_str = ""
+    if result != None:
+        for deal in result['deals']:
+            result_str += "<hr/>" + deal['title']
+            result_str += "<hr/>" + deal['image_url']
+            result_str += "<hr/>"
+
+    return HttpResponse(result_str)
+
+
 def _getDianpingDealsByIP(ipstr):
     """
     
@@ -60,15 +80,19 @@ def _getDianpingDealsByIP(ipstr):
     """
     d = baidu.getAddressByIP(ipstr)
     try:
+        d = json.loads(d)
         city = d['content']['address_detail']['city']
-        if city.endswith("\u市"):
+
+
+        if city.endswith(u"市"):
             city = city[:-1]
         city = city.encode('utf-8')
         #call dianping API
         gpons = dianping.getGrouponByCity(city)
         gpons =  utils.convert(gpons)
         return gpons
-    except:
+    except Exception as ex:
+        print ex
         return None
 
     

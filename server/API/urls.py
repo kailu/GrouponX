@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^register/', views.configure, name="register"),
     url(r'^createPageID/', views.createPageID, name="createPageID"),
     url(r'^login/', views.login, name="login"),
+    url(r'^testapi/', views.testAPI, name="testapi"),
 )
