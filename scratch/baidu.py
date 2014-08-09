@@ -71,7 +71,7 @@ if __name__ == '__main__':
     d = getAddressByIP('202.193.16.3')
     print d
     d = json.loads(d)
-    print d['content']['city'].encode('utf-8')
+    print d['content']['address_detail']['city'].encode('utf-8')
     
     
     
