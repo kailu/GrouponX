@@ -20,6 +20,7 @@ import baidu
 import dianping
 import utils
 import json
+import models
 
 
 def index(request):
@@ -33,7 +34,58 @@ def configure(request):
     Arguments:
     - `request`:
     """
-    pass
+    response_data = {}
+    response_data['status'] = 'yes'
+
+    if request.method != 'POST':
+            response_data['status'] = 'no'
+            response_data['error'] = 'This api only support POST call!'
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+
+    page_id = request.POST.get('page_id', None)
+    configure_id = request.POST.get('configure_id', None)
+    if page_id != None:
+        if configure_id == None:
+            #create a new one
+            c = models.ConfigEntity(page = page_id,
+                                    black_list = '',
+                                    white_list = '',
+                                    traffic_percentage = 0,
+                                    bidding_approach = 0,
+                                    layout_option = 0)
+            c.save()
+
+        else:
+            try:
+                c = models.ConfigEntity.objects.get(page = page_id)
+
+                traffic_percentage = request.POST.get('traffic',None)
+                white_list = request.POST.get('white_list',None)
+                black_list = request.POST.get('black_list',None)
+                bidding_approach = request.POST.get('bidding',None)
+                layout_option = request.POST.get('layout',None)
+                #parameter condition check            
+                if traffic_percentage != None:
+                    c.traffic_percentage = traffic_percentage
+                if white_list != None:
+                    c.white_list = white_list
+                if black_list != None:
+                    c.black_list = black_list
+                if bidding_approach != None:
+                    c.bidding_approach = bidding_approach
+                if layout_option != None:
+                    c.layout_approach = layout_option
+
+                c.save()
+            except Exception as inst:
+                #doesn't exist such configure for this page, return error code to client
+                response_data['status'] = 'no'
+                response_data['error']  = str(inst)
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'Page id must be assigned!'
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 def register(request):
@@ -195,3 +247,36 @@ def page(request):
     )
     
 
+def getdeals(request):
+    ipstr = request.GET.get('ip',None)
+    response_data = {}
+    response_data['status'] = 'ok'
+    result_str = ""
+    if ipstr != None:
+        result = _getDianpingDealsByIP(ipstr)
+        if result != None:
+            deals = []
+            for deal in result['deals']:
+                one_deal = {}
+                one_deal['title'] = deal['title']
+                one_deal['desc'] = deal['description']
+                one_deal['image_url'] = deal['image_url']
+                one_deal['list_price'] = deal['list_price']
+                one_deal['current_price'] = deal['current_price']
+                one_deal['purchase_count'] = deal['purchase_count']
+                one_deal['city'] = deal['city']
+                one_deal['cat'] = ','.join(deal['categories'])
+                one_deal['deal_url'] = deal['deal_url']
+                deals.append(one_deal)
+            response_data['data'] = deals
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        else:
+            response_data['status'] = 'no'
+            response_data['error'] = 'can not fetch data from backend!'
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'No IP has been specified!'
+    
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+        
