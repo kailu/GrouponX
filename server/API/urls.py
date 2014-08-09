@@ -21,12 +21,14 @@ class DirectTemplateView(TemplateView):
 
 
 urlpatterns = patterns('',
-    # redirect
+    # redirect / to index.html
     url(r'^$', DirectTemplateView.as_view(template_name='index.html')),
 
-    url(r'^index/', views.index, name='index' ),
+    url(r'^index/', views.index, name='index'),
     url(r'^configure/', views.configure, name="configure"),
-    url(r'^register/', views.configure, name="register"),
     url(r'^createPageID', views.createPageID, name="createPageID"),
     url(r'^login/', views.login, name="login"),
+    url(r'^register/', views.register, name="register"),
+    url(r'^pwd_reset/', views.pwd_reset, name="pwd_reset"),
+
 )
