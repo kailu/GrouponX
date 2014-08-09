@@ -218,7 +218,20 @@ def getdeals(request):
     if ipstr != None:
         result = _getDianpingDealsByIP(ipstr)
         if result != None:
-            response_data['data'] = result['deals']
+            deals = []
+            for deal in result['deals']:
+                one_deal = {}
+                one_deal['title'] = deal['title']
+                one_deal['desc'] = deal['description']
+                one_deal['image_url'] = deal['image_url']
+                one_deal['list_price'] = deal['list_price']
+                one_deal['current_price'] = deal['current_price']
+                one_deal['purchase_count'] = deal['purchase_count']
+                one_deal['city'] = deal['city']
+                one_deal['cat'] = ','.join(deal['categories'])
+                one_deal['deal_url'] = deal['deal_url']
+                deals.append(one_deal)
+            response_data['data'] = deals
             return HttpResponse(json.dumps(response_data), content_type="application/json")
         else:
             response_data['status'] = 'no'
@@ -226,7 +239,7 @@ def getdeals(request):
     else:
         response_data['status'] = 'no'
         response_data['error'] = 'No IP has been specified!'
-        
+    
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
         
