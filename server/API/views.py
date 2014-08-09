@@ -9,7 +9,7 @@ def index(request):
     return HttpResponse("hello, world!")
 
 
-@login_required(login_url='/accounts/login/')
+@login_required(login_url='/api/login/')
 def configure(request):
     """
     
@@ -27,7 +27,16 @@ def register(request):
     """
     pass
 
-@login_required(login_url='/accounts/login/')
+def login(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    pass
+
+
+@login_required(login_url='/api/login/')
 def createPageID(request):
     """
     
