@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
+from django.shortcuts import render, render_to_response
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
+import baidu
+import dianping
 
 def index(request):
     return HttpResponse("hello, world!")
@@ -46,5 +52,25 @@ def createPageID(request):
     pass
 
 
+def _getDianpingDealsByIP(ipstr):
+    """
+    
+    Arguments:
+    - `ipstr`:
+    """
+    d = baidu.getAddressByIP(ipstr)
+    try:
+        city = d['content']['address_detail']['city']
+        if city.endswith("\u市"):
+            city = city[:-1]
+        city = city.encode('utf-8')
+        #call dianping API
+        gpons = dianping.getGrouponByCity(city)
+        gpons =  utils.convert(gpons)
+        return gpons
+    except:
+        return None
+
+    
 
 
