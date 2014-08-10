@@ -2,6 +2,22 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+
+/* Space out content a bit */
+body {
+  padding-top: 20px;
+  padding-bottom: 30px;
+}
+    /* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.footer {
+  padding-right: 150px;
+  padding-left: 150px;
+  padding-bottom: 5px;
+}
+
+</style>
 <head>
     <link rel="stylesheet" href="{{ STATIC_URL }}style.css" />
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -18,11 +34,29 @@
 </head>
 
 <body>
-    <div id="header">
+    <div class="header">
+
     {% block header %}
     {% if user.is_authenticated %}
-        User <font face="verdana" size="4">{{ user.username }}</font>{% trans " welcome!" %}
-        <a href="{% url 'logout' %}">{% trans "Log out" %}</a>
+
+
+        <nav class="navbar navbar-default" role="navigation">
+    	  <div class="container">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		      <div class="navbar-brand navbar-brand-centered">
+                  User <font face="verdana" size="4">{{ user.username }}</font>{% trans " welcome!" %}
+              </div>
+		    </div>
+
+		    <!-- Collect the nav links, forms, and other content for toggling -->
+		    <div class="collapse navbar-collapse" id="navbar-brand-centered">
+		      <ul class="nav navbar-nav">
+		        <li><a href="{% url 'logout' %}">{% trans "Log out" %}</a></li>
+		      </ul>
+		    </div><!-- /.navbar-collapse -->
+		  </div><!-- /.container-fluid -->
+		</nav>
     {% else %}
     {% endif %}
     {% endblock %}
