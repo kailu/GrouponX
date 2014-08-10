@@ -172,19 +172,11 @@
     $("input[name='layout'][value='" + config.layout_approach + "']").prop("checked", true)
 
     // Bind handlers
-    $("#add-configuration-button").click(function() {
-      $.getJSON("/api/createconfig?p_id=" + config.page + "&name=unnamed", function(data) {
-          page.push(data.data);
-
-          createConfiguration(page, data.data);
-      });
-    });
-
-    $("input[name='strategy']").change(function(event) {
+    $("input[name='strategy']").off().change(function(event) {
       config.bidding_approach = $(event.currentTarget).val();
       saveConfig(config);
     });
-    $("input[name='listing'][value='whitelist']").change(function() {
+    $("input[name='listing'][value='whitelist']").off().change(function() {
       $("#whitelist input[type='text']").prop("disabled", false);
       $("#blacklist input[type='text']").prop("disabled", true);
 
@@ -193,13 +185,13 @@
 
       saveConfig(config);
     });
-    $("#whitelist input[type='text']").focusout(function() {
+    $("#whitelist input[type='text']").off().focusout(function() {
       config.white_list = $("#whitelist input[type='text']").val();
       config.black_list = "";
 
       saveConfig(config);
     });
-    $("input[name='listing'][value='blacklist']").change(function() {
+    $("input[name='listing'][value='blacklist']").off().change(function() {
       $("#whitelist input[type='text']").prop("disabled", true);
       $("#blacklist input[type='text']").prop("disabled", false);
 
@@ -208,13 +200,13 @@
 
       saveConfig(config);
     });
-    $("#blacklist input[type='text']").focusout(function() {
+    $("#blacklist input[type='text']").off().focusout(function() {
       config.white_list = "";
       config.black_list = $("#blacklist input[type='text']").val();
 
       saveConfig(config);
     });
-    $("input[name='layout']").change(function(event) {
+    $("input[name='layout']").off().change(function(event) {
       config.layout_approach = $(event.currentTarget).val();
 
       saveConfig(config);
@@ -278,6 +270,13 @@
       }
       loadConfiguration(page, page[0].id);
     });  
+  });
+
+  $("#add-configuration-button").off().click(function() {
+    $.getJSON("/api/createconfig?p_id=" + config.page + "&name=unnamed", function(data) {
+        page.push(data.data);
+        createConfiguration(page, data.data);
+    });
   });
 </script>
 {% endblock %}
