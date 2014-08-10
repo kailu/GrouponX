@@ -380,7 +380,7 @@ $(document).ready(function() {
     var id = config.id;
     var name = config.name;
     var traffic = config.traffic_percentage;
-    var configuration = $('<div><span class="radio-box"><input type="radio" name="config" value="' + id + '"><input class="config_name" type="text" value="' + name + '"></span><input class="percentage" type="text" size="3" value="' + traffic + '" style="text-align: center"></div>');
+    var configuration = $('<div><span class="radio-box"><input type="radio" name="config" value="' + id + '"><input class="config_name" type="text" value="' + name + '"></span><input class="percentage" type="text" size="3" value="' + traffic + '" style="text-align: center"> % traffic</div>');
     $(".config_name", configuration).focusout(function(event) {
       config.name = $(event.currentTarget).val();
       saveConfig(config);
