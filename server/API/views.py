@@ -26,6 +26,8 @@ from django.forms.models import model_to_dict
 import random
 import bidders
 
+
+
 def index(request):
     return HttpResponse("hello, world!")
 
@@ -215,6 +217,9 @@ def register(request):
 
 
 def login_(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/api/page')
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -232,11 +237,7 @@ def login_(request):
 
 def logout_(request):
     logout(request)
-    return render_to_response(
-        'index.html',
-        {},
-        context_instance=RC(request, {}),
-    )
+    return HttpResponseRedirect('/')
 
 
 def login_to_page(request, username, password):
@@ -247,12 +248,16 @@ def login_to_page(request, username, password):
             print("User is valid, active and authenticated")
             print "domain: ", user.site.domain
             print "u_id", user.id
-            return HttpResponseRedirect('../page/')
+            return HttpResponseRedirect('/api/page/')
         else:
             print("The password is valid, but the account has been disabled!")
+            return HttpResponseRedirect('/api/page/')
+
     else:
         # the authentication system was unable to verify the username and password
         print("The username and password were incorrect.")
+        return HttpResponseRedirect('/api/page/')
+
 
 
 def register(request):
@@ -497,6 +502,7 @@ def getdeals(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def _bidderFactory(conf, params):
+
     if conf.bidding_approach == 0:
         return bidders.defaultBidder(conf,params)
     elif conf.bidding_approach == 1:
@@ -541,4 +547,30 @@ def serving(request):
             response_data['error'] = str(err)
             response_data['status'] = 'no'
 
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def getdeals1(request):
+    ipstr = request.GET.get('ip',None)
+    config_id = request.GET.get('c_id',None)
+    try:
+        c = models.ConfigEntity.objects.get(pk=config_id)
+    except:
+        c = None
+    response_data = {}
+    response_data['status'] = 'ok'
+    if not ipstr == None and not config_id == None and not c == None:
+        params = {}
+        params['ip'] = ipstr
+        bidder = _bidderFactory(c,params)
+        if bidder == None:
+            response_data['status'] = 'no'
+            response_data['error'] = 'no bidder founded!'
+        else:
+            data = bidder()
+            response_data['data'] = data
+
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'api need ip and config id as parameters'
+        
     return HttpResponse(json.dumps(response_data), content_type="application/json")

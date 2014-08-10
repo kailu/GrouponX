@@ -22,9 +22,8 @@ class DirectTemplateView(TemplateView):
 
 urlpatterns = patterns('',
     # redirect / to index.html
-    url(r'^$', DirectTemplateView.as_view(template_name='index.html')),
+    url(r'^$', views.login_, name='login'),
 
-    url(r'^index/', views.index, name='index'),
     url(r'^configure/', views.configure, name="configure"),
     url(r'^createPageID', views.createPageID, name="createPageID"),
 
@@ -34,7 +33,7 @@ urlpatterns = patterns('',
     url(r'^pwd_reset/', views.pwd_reset, name="pwd_reset"),
     url(r'^testapi/', views.testAPI, name="testapi"),
     url(r'^page/',views.page, name="page"),
-    url(r'^getdeals', views.getdeals, name='getdeals'),
+    url(r'^getdeals', views.getdeals1, name='getdeals'),
     url(r'^createpage',views.createPage, name='createpage'),
     url(r'^readpage$', views.readPage, name='readpage'),
     url(r'^savepage$', views.savePage, name='savepage'),

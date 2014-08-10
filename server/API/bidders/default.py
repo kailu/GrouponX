@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import API.dianping as dianping
-import API.baidu as baidu
-import API.utils as utils
+from API import dianping
+from API import baidu
+from API import utils
+import json
 
 
-def defautBidder(conf, params):
+def defaultBidder(conf, params):
     """
     
     Arguments:
@@ -13,8 +14,8 @@ def defautBidder(conf, params):
     """
     def bidder():
         #get ip from parms
-        ip_str = parms.get('ip',None)
-        d = baidu.getAddressByIP(ipstr)
+        ip_str = params.get('ip',None)
+        d = baidu.getAddressByIP(ip_str)
         try:
             d = json.loads(d)
             city = d['content']['address_detail']['city']
