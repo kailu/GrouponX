@@ -8,7 +8,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django import forms
-
+from django.contrib import admin
 
 class RegistrationForm(UserCreationForm):
     domain = forms.CharField(max_length=255, required=True)
@@ -25,12 +25,22 @@ class Site(models.Model):
     domain = models.CharField(max_length=255)
     hash = models.CharField(max_length=255)
 
+class SiteAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Site, SiteAdmin)
+
 
 class PageEntity(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=255)
     pagename = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now = True)
+
+class PageAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(PageEntity, PageAdmin)
 
 #
 # Bidding number mapping:
@@ -53,3 +63,8 @@ class ConfigEntity(models.Model):
 
 
         
+class ConfigAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(ConfigEntity, ConfigAdmin)
+
