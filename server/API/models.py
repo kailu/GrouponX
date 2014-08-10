@@ -19,6 +19,8 @@ class RegistrationForm(UserCreationForm):
         for fieldname in ['username', 'password1', 'password2']:
             self.fields[fieldname].help_text = None
 
+        self.fields['password2'].label = 'Confirm'
+
     def save(self, commit=True):
         if not commit:
             raise NotImplementedError("Can't create User and UserProfile without database save")
