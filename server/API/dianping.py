@@ -88,6 +88,12 @@ def getGrouponByCity(city):
     
     return _api(url,params)
 
+def getGroupon(city,params):
+    url = 'http://api.dianping.com/v1/deal/find_deals'
+    params.append(('city',city))
+
+    return _api(url,params)
+
 def getAllDealCities():
     params = []
     url = "http://api.dianping.com/v1/metadata/get_cities_with_deals"

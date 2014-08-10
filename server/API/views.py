@@ -23,7 +23,8 @@ import utils
 import json
 import models
 from django.forms.models import model_to_dict
-
+import random
+import bidders
 
 def index(request):
     return HttpResponse("hello, world!")
@@ -494,4 +495,49 @@ def getdeals(request):
     
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-        
+def _bidderFactory(conf, params):
+    if conf.bidding_approach == 0:
+        return bidders.defaultBidder(conf,params)
+    elif conf.bidding_approach == 1:
+        return bidders.maxDiscountBidder(conf,params)
+    else:
+        return None
+
+def serving(request):
+    """
+    
+    Arguments:
+    - `request`:
+    """
+    response_data = {}
+    response_data['status'] = 'ok'
+
+    page_id = request.GET.get('p_id',None)
+    ip = request.GET.get('ip',None)
+    if page_id == None:
+        pass
+    else:
+        #fetch all configures for the page
+        try:
+            page = models.PageEntity.objects.get(pk=page_id)
+            configures = models.ConfigEntity.objects.filter(page = page)
+            params = {}
+            params['ip'] = ip
+            r_number = random.random()
+            acc_number = 0.0
+            for c in configures:
+                acc_number += c.traffic_percentage
+                if acc_number > r_number:
+                    #use this configure
+                    bidder = _bidderFactory(c, params)
+                    if bidder == None:
+                        response_data['status'] = 'no'
+                        response_data['error'] = 'no bidder founded!'
+                    data = bidder()
+                    response_data['data'] = data
+                    break
+        except Exception as err:
+            response_data['error'] = str(err)
+            response_data['status'] = 'no'
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
