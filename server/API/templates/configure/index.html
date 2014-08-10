@@ -464,8 +464,13 @@ $(document).ready(function() {
     var title = $("<div/>").text(data.title).css("font-size", "18px")
         .css("margin-bottom", "5px").css("border-bottom", "1px black solid")
         .css("white-space", "nowrap").css("overflow", "hidden").css("text-overflow", "ellipsis");
-    return $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
-        .append(image).append(title);
+    var current_price = $("<div>Current price: " + data.current_price + "</div>");
+    var list_price = $("<div>List price: " + data.list_price + "</div>");
+    var city = $("<div/>").text("in city " + data.city);
+    var link = $("<a/>").attr("href", data.deal_url).attr("target", "_blank");
+    var content = $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
+        .append(image).append(title).append(current_price).append(list_price).append(city);
+    return link.append(content);
   }
 
   var animation_msec = 4000;
