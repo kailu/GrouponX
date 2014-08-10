@@ -148,6 +148,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                     <div class="configuration-box">
                       <div class="page-box">
                         <button id="add-configuration-button" style="margin-bottom: 15px">Add Configuration</button>
+                        <button id="preview-traffic-button" style="margin-bottom: 15px">Preview Traffic</button>
                       </div>
 
                       <div class="config-box">
@@ -441,6 +442,11 @@ $(document).ready(function() {
               createConfiguration(page, data.data);
           });
         });
+
+        $("#preview-traffic-button").off().click(function() {
+          var ip = $("select#city option:selected").val();
+          window.open("/api/preview?p_id=" + data.data.p_id + "&ip=" + ip);
+        });
       });
       return;
     }
@@ -458,6 +464,11 @@ $(document).ready(function() {
             createConfiguration(page, data.data);
         });
       });
+
+      $("#preview-traffic-button").off().click(function() {
+          var ip = $("select#city option:selected").val();
+          window.open("/api/preview?p_id=" + data.data[0].id + "&ip=" + ip);
+      });
     });  
   });
 
@@ -468,6 +479,8 @@ $(document).ready(function() {
     var ip = $("select#city option:selected").val();
     var c_id = config.id;
     $.getJSON("/api/getdeals?ip=" + ip + "&c_id=" +c_id, function(data) {
+      $(".layout-template").remove();
+
       $("#target").append(render_single_layout(data.data[0]).addClass("layout-template"));
       $("#target2").append(render_double_layout(data.data[0], data.data[1]).addClass("layout-template"));
       $("#target3").append(render_double_layout2(data.data[0], data.data[1]).addClass("layout-template"));
