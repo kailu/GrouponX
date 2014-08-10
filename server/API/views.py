@@ -536,6 +536,7 @@ def serving(request):
             acc_number = 0.0
             for c in configures:
                 acc_number += c.traffic_percentage*1.0/100
+
                 if acc_number > r_number:
                     #use this configure
                     bidder = _bidderFactory(c, params)
@@ -544,6 +545,7 @@ def serving(request):
                         response_data['error'] = 'no bidder founded!'
                     data = bidder()
                     response_data['data'] = data
+                    response_data['c_name'] = c.name
                     break
         except Exception as err:
             response_data['error'] = str(err)
