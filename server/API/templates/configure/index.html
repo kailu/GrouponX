@@ -369,11 +369,11 @@ $(document).ready(function() {
       "layout_approach": config.layout_approach,
       "white_list": config.white_list,
       "black_list": config.black_list
+    }, function() {
+      if (!skip_update_preview) {
+        update_preview(config);
+      }
     });
-
-    if (!skip_update_preview) {
-      update_preview(config);
-    }
   }
 
   function createConfiguration(page, config) {
@@ -465,7 +465,7 @@ $(document).ready(function() {
         .css("margin-bottom", "5px").css("border-bottom", "1px black solid")
         .css("white-space", "nowrap").css("overflow", "hidden").css("text-overflow", "ellipsis");
     var discount_rate = Math.floor((data.current_price / data.list_price) * 100) / 10;
-    var discount_div = $("<div/>").text(discount_rate + "折").css("float", "left").css("width", "45%").css("font-size", "26px");
+    var discount_div = $("<div/>").text(discount_rate + "折").css("float", "left").css("width", "45%").css("font-size", "26px").css("color", "red").css("margin", "9px 0 0 5px");
     var current_price = $("<div/>").text("现价:"+data.current_price);
     var list_price = $("<div/>").html("原价:<s>" + data.list_price + "</s>");
     var city = $("<div/>").text("城市:"+data.city);
