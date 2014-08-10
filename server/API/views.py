@@ -78,7 +78,7 @@ def readConfigure(request):
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
-
+@csrf_exempt
 def saveConfigure(request):
     """
     
