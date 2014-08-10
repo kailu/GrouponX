@@ -49,6 +49,7 @@
 
 <div class="configuration-box">
   <div class="page-box">
+    <button id="add-configuration-button" style="margin-bottom: 15px">Add Configuration</button>
   </div>
   
   <div class="config-box">
@@ -154,7 +155,7 @@
     $("#" + list_name + " input[type='text']").val("");
   }
 
-  function loadConfig(config) {
+  function loadConfig(page, config) {
     // Select strategy
     $("input[name='strategy'][value='" + config.bidding_approach + "']").prop("checked", true);
 
@@ -171,6 +172,14 @@
     $("input[name='layout'][value='" + config.layout_approach + "']").prop("checked", true)
 
     // Bind handlers
+    $("#add-configuration-button").click(function() {
+      $.getJSON("/api/createconfig?p_id=" + config.page + "&name=unnamed", function(data) {
+          page.push(data.data);
+
+          createConfiguration(page, data.data);
+      });
+    });
+
     $("input[name='strategy']").change(function(event) {
       config.bidding_approach = $(event.currentTarget).val();
       saveConfig(config);
@@ -252,7 +261,7 @@
 
     for (var i = 0; i < page.length; i++) {
       if (page[i].id == id) {
-        loadConfig(page[i]);
+        loadConfig(page, page[i]);
       }
     }
   }
