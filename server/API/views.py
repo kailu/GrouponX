@@ -110,7 +110,7 @@ def saveConfigure(request):
                 white_list = request.POST.get('white_list',None)
                 black_list = request.POST.get('black_list',None)
                 bidding_approach = request.POST.get('bidding_approach',None)
-                layout_option = request.POST.get('layout',None)
+                layout_option = request.POST.get('layout_approach',None)
                 name = request.POST.get('name',None)
 
                 #parameter condition check            
@@ -328,14 +328,14 @@ def savePage(request):
     response_data = {}
 
     if request.method == 'POST':
-            json = request.body
+            payload = request.body
             """
                 {
                     data : [config array],
                     p_id: int
                 }
             """
-            json['data']
+            json.loads(payload)
     else:
         response_data['status'] = 'fail'
         response_data['reason'] = 'Not a POST call'
