@@ -341,7 +341,14 @@ def savePage(request):
             p_id = payload['p_id']
             print 'p_id', p_id
 
-            #if isinstance(payload['data'], list):
+            if isinstance(payload['data'], list):
+                for config in payload['data']:
+                    print config
+                    c = models.ConfigEntity.objects.get(pk=config['id'])
+                    c.traffic_percentage = config['traffic_percentage']
+                    c.save()
+            else:
+                print 'data not a list'
 
     else:
         response_data['status'] = 'fail'
