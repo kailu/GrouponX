@@ -452,7 +452,8 @@ def _getDianpingDealsByIP(ipstr):
         print ex
         return None
 
-    
+
+@login_required(login_url='/api/login/')
 def page(request):
     print '==', request.user.is_authenticated()
 
