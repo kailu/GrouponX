@@ -430,14 +430,14 @@ $(document).ready(function() {
   $.getJSON("/api/readpagelist", function(data) {
     if (data.data.length == 0) {
       $.getJSON("/api/createpage?name=unnamed", function(data) {
-        $.getJSON("/api/createconfig?p_id=" + data.data.p_id + "&name=unnamed", function(data) {
+        $.getJSON("/api/createconfig?p_id=" + data.data.page + "&name=unnamed", function(data) {
 	  var page = [ data.data ];
           createConfiguration(page, page[0]);
           loadConfiguration(page, page[0].id);
         });
 
         $("#add-configuration-button").off().click(function() {
-          $.getJSON("/api/createconfig?p_id=" + data.data.p_id + "&name=unnamed", function(data) {
+          $.getJSON("/api/createconfig?p_id=" + data.data.page + "&name=unnamed", function(data) {
               page.push(data.data);
               createConfiguration(page, data.data);
           });
@@ -445,7 +445,7 @@ $(document).ready(function() {
 
         $("#preview-traffic-button").off().click(function() {
           var ip = $("select#city option:selected").val();
-          window.open("/api/preview?p_id=" + data.data.p_id + "&ip=" + ip);
+          window.open("/api/preview?p_id=" + data.data.page + "&ip=" + ip);
         });
       });
       return;
@@ -459,7 +459,7 @@ $(document).ready(function() {
       loadConfiguration(page, page[0].id);
 
       $("#add-configuration-button").off().click(function() {
-        $.getJSON("/api/createconfig?p_id=" + data.data[0].id + "&name=unnamed", function(data) {
+        $.getJSON("/api/createconfig?p_id=" + data.data[0].page + "&name=unnamed", function(data) {
             page.push(data.data);
             createConfiguration(page, data.data);
         });
@@ -467,7 +467,7 @@ $(document).ready(function() {
 
       $("#preview-traffic-button").off().click(function() {
           var ip = $("select#city option:selected").val();
-          window.open("/api/preview?p_id=" + data.data[0].id + "&ip=" + ip);
+          window.open("/api/preview?p_id=" + data.data[0].page + "&ip=" + ip);
       });
     });  
   });
