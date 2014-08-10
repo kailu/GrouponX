@@ -186,13 +186,13 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                         <span class="radio-box">
                           <input type="radio" name="listing" value="whitelist" size="10">Whitelist
                         </span>
-                        <input type="text" size="120">
+                        <input type="text" size="80">
                           </div>
                           <div id="blacklist">
                         <span class="radio-box">
                           <input type="radio" name="listing" value="blacklist">Blacklist
                         </span>
-                        <input type="text" size="120 disabled">
+                        <input type="text" size="80" disabled>
                           </div>
                         </div>
 
@@ -222,7 +222,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                           </div>
                           <div class="layout-box" id="target3">
                         <div class="radio-box">
-                          <input type="radio" name="layout" value="2">
+                          <input type="radio" name="layout" value="2">Merry-Go-Round
                         </div>
                           </div>
                         </div>
@@ -380,7 +380,7 @@ $(document).ready(function() {
     var id = config.id;
     var name = config.name;
     var traffic = config.traffic_percentage;
-    var configuration = $('<div><span class="radio-box"><input type="radio" name="config" value="' + id + '"><input class="config_name" type="text" value="' + name + '"></span><input class="percentage" type="text" size="3" value="' + traffic + '" style="text-align: center"></div>');
+    var configuration = $('<div><span class="radio-box"><input type="radio" name="config" value="' + id + '"><input class="config_name" type="text" value="' + name + '"></span><input class="percentage" type="text" size="3" value="' + traffic + '" style="text-align: center"> % traffic</div>');
     $(".config_name", configuration).focusout(function(event) {
       config.name = $(event.currentTarget).val();
       saveConfig(config);
@@ -464,9 +464,13 @@ $(document).ready(function() {
     var title = $("<div/>").text(data.title).css("font-size", "18px")
         .css("margin-bottom", "5px").css("border-bottom", "1px black solid")
         .css("white-space", "nowrap").css("overflow", "hidden").css("text-overflow", "ellipsis");
-    var desc = $("<div/>").text(data.desc).css("font-size", "14px");
-    return $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
-        .append(image).append(title).append(desc);
+    var current_price = $("<div>Current price: " + data.current_price + "</div>");
+    var list_price = $("<div>List price: " + data.list_price + "</div>");
+    var city = $("<div/>").text("in city " + data.city);
+    var link = $("<a/>").attr("href", data.deal_url).attr("target", "_blank");
+    var content = $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
+        .append(image).append(title).append(current_price).append(list_price).append(city);
+    return link.append(content);
   }
 
   var animation_msec = 4000;
@@ -474,8 +478,24 @@ $(document).ready(function() {
   function render_double_layout(data1, data2) {
     var div1 = render_single_layout(data1);
     var div2 = render_single_layout(data2).css("position", "absolute").css("left", "0").css("top", "0").css("opacity", "0");
-    div1.animate({opacity: 0}, {duration: animation_msec});
-    div2.animate({opacity: 1}, {duration: animation_msec});
+    var func1 = function() {
+      div1.animate({opacity: 0}, {duration: animation_msec});
+      div2.animate({opacity: 1}, {duration: animation_msec});
+    }
+    var func2 = function() {
+      div1.animate({opacity: 1}, {duration: animation_msec});
+      div2.animate({opacity: 0}, {duration: animation_msec});
+    }
+
+    var func = true;
+    setInterval(function() {
+      if (func) {
+        func1();
+      } else {
+        func2();
+      };
+      func = !func;
+    }, 2000);
     return $("<div/>").css("position", "relative").append(div1).append(div2);
   }
 
@@ -483,8 +503,28 @@ $(document).ready(function() {
     var div1 = render_single_layout(data1).css("opacity", "0");
     var div2 = render_single_layout(data1).css("position", "absolute").css("left", "0").css("top", "0");
     var div3 = render_single_layout(data2).css("position", "absolute").css("left", "190px").css("top", "0");
-    div2.animate({left: "-190px"}, {duration: animation_msec});
-    div3.animate({left: "0px"}, {duration: animation_msec});
+    var func3 = function() {
+      div2.animate({left: "-190px"}, {duration: animation_msec, complete: function() {
+        div2.css("left", "190px");
+      }});
+      div3.animate({left: "0px"}, {duration: animation_msec});
+    }
+    var func4 = function() {
+      div3.animate({left: "-190px"}, {duration: animation_msec, complete: function() {
+        div3.css("left", "190px");
+      }});
+      div2.animate({left: "0px"}, {duration: animation_msec});
+    }
+
+    var func5 = true;
+    setInterval(function() {
+      if (func5) {
+        func3();
+      } else {
+        func4();
+      };
+      func5 = !func5;
+    }, 2000);
     return $("<div/>").css("position", "relative").append(div1).append(div2).append(div3);
   }
 </script>
