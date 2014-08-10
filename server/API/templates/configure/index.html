@@ -121,7 +121,6 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
   .layout-box {
     overflow: hidden;
     display: inline-block;
-    border: 1px black solid;
     width: 25%;
     height: 300px;
     padding: 10px;
@@ -201,9 +200,13 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                         <div class="section">
                           <div class="section-header">Layout</div>
                           <div>Select city to preview:
-                        <select>
-                          <option>Beijing</option>
-                          <option>Shanghai</option>
+                        <select id="city">
+                          <option value="58.30.15.255">Beijing</option>
+                          <option value="58.24.23.255 ">Shanghai</option>
+			  <option value="202.193.16.3">Guilin</option>
+			  <option value="58.60.5.57">Shenzhen</option>
+			  <option value="222.210.18.2">Chengdu</option>
+			  <option value="222.247.60.114">Changsha</option>
                         </select>
                         <span id="preview" style="display: none; margin-left: 50px">Updating preview... Please wait.</span>
                           </div>
@@ -219,7 +222,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                           </div>
                           <div class="layout-box" id="target3">
                         <div class="radio-box">
-                          <input type="radio" name="layout" value="2">Many
+                          <input type="radio" name="layout" value="2">
                         </div>
                           </div>
                         </div>
@@ -349,6 +352,9 @@ $(document).ready(function() {
 
       saveConfig(config, true);
     });
+    $("select#city").change(function(event) {
+      update_preview(config);
+    });
 
     update_preview(config);
   }
@@ -442,8 +448,9 @@ $(document).ready(function() {
     $("#preview").fadeIn();
     $(".layout-template").remove();
 
+    var ip = $("select#city option:selected").val();
     var c_id = config.id;
-    $.getJSON("/api/getdeals?ip=202.193.16.3&c_id=" +c_id, function(data) {
+    $.getJSON("/api/getdeals?ip=" + ip + "&c_id=" +c_id, function(data) {
       $("#target").append(render_single_layout(data.data[0]).addClass("layout-template"));
       $("#target2").append(render_double_layout(data.data[0], data.data[1]).addClass("layout-template"));
       $("#target3").append(render_double_layout2(data.data[0], data.data[1]).addClass("layout-template"));
