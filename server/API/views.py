@@ -109,7 +109,7 @@ def saveConfigure(request):
                 traffic_percentage = request.POST.get('traffic',None)
                 white_list = request.POST.get('white_list',None)
                 black_list = request.POST.get('black_list',None)
-                bidding_approach = request.POST.get('bidding',None)
+                bidding_approach = request.POST.get('bidding_approach',None)
                 layout_option = request.POST.get('layout',None)
                 name = request.POST.get('name',None)
 
@@ -319,6 +319,32 @@ def createPage(request):
         d = {}
         d['p_id'] = page.id
         response_data['data'] = d
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+#@login_required(login_url='/api/login')
+@csrf_exempt
+def savePage(request):
+    response_data = {}
+
+    if request.method == 'POST':
+            json = request.body
+            """
+                {
+                    data : [config array],
+                    p_id: int
+                }
+            """
+            json['data']
+    else:
+        response_data['status'] = 'fail'
+        response_data['reason'] = 'Not a POST call'
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+    print 'savePage - ajax post: ', request.body
+
+    response_data['status'] = 'ok'
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
