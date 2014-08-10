@@ -260,6 +260,13 @@
 
   $.getJSON("/api/readpagelist", function(data) {
     if (data.data.length == 0) {
+      $.getJSON("/api/createpage?name=unnamed", function(data) {
+        $.getJSON("/api/createconfig?p_id=" + data.data.p_id + "&name=unnamed", function(data) {
+	  var page = [ data.data ];
+          createConfiguration(page, page[0]);
+          loadConfiguration(page, page[0].id);
+        });
+      });
       return;
     }
 
