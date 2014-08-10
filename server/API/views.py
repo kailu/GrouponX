@@ -70,7 +70,7 @@ def readConfigure(request):
     c_id = request.GET.get('c_id',None)
     if c_id != None:
         try:
-            conf = ConfigEntity.objects.get(pk = c_id)
+            conf = models.ConfigEntity.objects.get(pk = c_id)
             response_data['data'] = model_to_dict(conf)
         except Exception as error:
             response_data['status'] = 'no'
@@ -104,7 +104,9 @@ def saveConfigure(request):
         else:
             try:
                 p = models.PageEntity.objects.get(pk = page_id)
-                c = models.ConfigEntity.objects.get(page = p)
+                c = models.ConfigEntity.objects.get(pk = configure_id)
+                #if c.page != p:
+
 
                 traffic_percentage = request.POST.get('traffic',None)
                 white_list = request.POST.get('white_list',None)
@@ -325,17 +327,22 @@ def createPage(request):
 #@login_required(login_url='/api/login')
 @csrf_exempt
 def savePage(request):
+    print "--- savePage ---"
     response_data = {}
 
     if request.method == 'POST':
-            payload = request.body
             """
                 {
                     data : [config array],
                     p_id: int
                 }
             """
-            json.loads(payload)
+            payload = json.loads(request.body)
+            p_id = payload['p_id']
+            print 'p_id', p_id
+
+            #if isinstance(payload['data'], list):
+
     else:
         response_data['status'] = 'fail'
         response_data['reason'] = 'Not a POST call'
