@@ -1,15 +1,58 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+
 {% block content %}
+<script>
+   $( document ).ready(function(){
+   $('#id_username').addClass('form-control input-lg');
+   $('#id_password').addClass('form-control input-lg');
+
+   $('#id_username').attr('placeholder','Username');
+   $('#id_password').attr('placeholder','Password');
+}
+   );
+</script>
+
 <form method="post" action=".">
   {% csrf_token %}
-  {{ form.as_p }}
 
-  <input type="submit" value="{% trans 'Log in' %}" />
-  <input type="hidden" name="next" value="{{ next }}" />
-</form>
+<!--- main content -->
+<div class="container">
 
-<p>{% trans "Forgot password" %}? <a href="{% url 'pwd_reset' %}">{% trans "Reset" %}</a></p>
-<p>{% trans "Not member" %}? <a href="{% url 'register' %}">{% trans "Register one" %}</a></p>
+<div class="row" style="margin-top:20px">
+    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+		<form role="form">
+			<fieldset>
+				<h2>GrouponX AD System Sign In</h2>
+				<hr class="colorgraph">
+				<div class="form-group">
+				  {{ form.username }}
+				</div>
+				<div class="form-group">
+<!--                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password">
+	-->
+{{ form.password }}
+			</div>
+				<div class="row">
+
+					<a href="{% url 'pwd_reset' %}" class="btn btn-link pull-right">Forgot Password?</a>
+				</div>
+
+				<hr class="colorgraph">
+				<div class="row">
+					<div class="col-xs-6 col-sm-6 col-md-6">
+                        <input type="submit" class="btn btn-lg btn-success btn-block" value="Sign In">
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-6">
+						<a href="{% url 'register' %}" class="btn btn-lg btn-primary btn-block">Register</a>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+
+</div>
+
 {% endblock %}
