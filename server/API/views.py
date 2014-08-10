@@ -578,3 +578,12 @@ def getdeals1(request):
         response_data['error'] = 'api need ip and config id as parameters'
         
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def getCategories(request):
+    cats = dianping.getCategories()['categories']
+    return render_to_response(
+            'configure/cats.html',
+            {'cats':cats},
+            context_instance=RC(request, {}),
+    )

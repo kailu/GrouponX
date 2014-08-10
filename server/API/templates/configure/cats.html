@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+{% for cat in cats %}
+
+<h1>
+  {{ cat.category_name }}
+</h1>
+<ul>
+{% for sub_cat in cat.subcategories %}
+<li>
+  {{ sub_cat }}
+</li>
+{% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}
