@@ -546,6 +546,8 @@ def serving(request):
                     data = bidder()
                     response_data['data'] = data
                     response_data['c_name'] = c.name
+                    response_data['bidding'] = c.bidding_approach
+                    response_data['layout'] = c.layout_approach
                     break
         except Exception as err:
             response_data['error'] = str(err)
