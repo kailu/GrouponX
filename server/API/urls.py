@@ -42,5 +42,6 @@ urlpatterns = patterns('',
     url(r'^createconfig', views.createConfigure, name='createconfig'),
     url(r'^readconfig', views.readConfigure, name='readconfig'),
     url(r'^saveconfig', views.saveConfigure, name='saveconfig'),
+    url(r'^serving$',views.serving, name='serving'),
     url(r'^admin/', include(admin.site.urls)),
 )
