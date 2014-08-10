@@ -26,6 +26,8 @@ from django.forms.models import model_to_dict
 import random
 import bidders
 
+
+
 def index(request):
     return HttpResponse("hello, world!")
 
@@ -500,6 +502,7 @@ def getdeals(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 def _bidderFactory(conf, params):
+
     if conf.bidding_approach == 0:
         return bidders.defaultBidder(conf,params)
     elif conf.bidding_approach == 1:
@@ -544,4 +547,30 @@ def serving(request):
             response_data['error'] = str(err)
             response_data['status'] = 'no'
 
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def getdeals1(request):
+    ipstr = request.GET.get('ip',None)
+    config_id = request.GET.get('c_id',None)
+    try:
+        c = models.ConfigEntity.objects.get(pk=config_id)
+    except:
+        c = None
+    response_data = {}
+    response_data['status'] = 'ok'
+    if not ipstr == None and not config_id == None and not c == None:
+        params = {}
+        params['ip'] = ipstr
+        bidder = _bidderFactory(c,params)
+        if bidder == None:
+            response_data['status'] = 'no'
+            response_data['error'] = 'no bidder founded!'
+        else:
+            data = bidder()
+            response_data['data'] = data
+
+    else:
+        response_data['status'] = 'no'
+        response_data['error'] = 'api need ip and config id as parameters'
+        
     return HttpResponse(json.dumps(response_data), content_type="application/json")
