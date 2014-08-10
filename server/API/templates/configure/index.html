@@ -128,6 +128,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
   }
 </style>
 
+
 <div class="container">
 	<div class="row">
         <div class="col-lg-10 col-md-5 col-sm-8 col-xs-9 bhoechie-tab-container">
@@ -223,10 +224,26 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
                           </div>
                           <div class="layout-box" id="target3">
                         <div class="radio-box">
-                          <input type="radio" name="layout" value="2">Merry-Go-Round
+                          <input type="radio" name="layout" value="2">Carousel
                         </div>
                           </div>
                         </div>
+                      </div>
+
+                        <div class="siteid-box">
+                        <label style="margin-bottom: 15px"><font face="verdana" size="2">Import the following snippet to your html &lt;head&gt;, and you are all set!</label>
+                        <pre><code class="language-javascript">&lt;!-- Grouponx --&gt;
+&lt;script&gt;
+(function(i,s,o,g,r,a,m){i['Grouponx']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.grouponx.com/grouponx.js','gx');
+
+gx('siteID', '{{ user.site.hash}}', 'auto');
+gx('send', 'pageview');
+
+&lt;/script&gt;
+&lt;!-- End Grouponx --&gt;</code></pre>
                       </div>
                     </div>
                 </div>
