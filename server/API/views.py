@@ -587,3 +587,11 @@ def getCategories(request):
             {'cats':cats},
             context_instance=RC(request, {}),
     )
+
+
+def preview(request):
+    return render_to_response(
+            'configure/preview.html',
+            {},
+            context_instance=RC(request, {}),
+    )

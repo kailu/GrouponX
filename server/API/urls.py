@@ -43,5 +43,6 @@ urlpatterns = patterns('',
     url(r'^saveconfig', views.saveConfigure, name='saveconfig'),
     url(r'^serving$',views.serving, name='serving'),
     url(r'^allcats$',views.getCategories,name='allcats'),
+    url(r'^preview$',views.preview, name='preview'),
     url(r'^admin/', include(admin.site.urls)),
 )
