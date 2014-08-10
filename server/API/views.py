@@ -109,7 +109,7 @@ def saveConfigure(request):
                 #if c.page != p:
 
 
-                traffic_percentage = request.POST.get('traffic',None)
+                traffic_percentage = request.POST.get('traffic_percentage',None)
                 white_list = request.POST.get('white_list',None)
                 black_list = request.POST.get('black_list',None)
                 bidding_approach = request.POST.get('bidding_approach',None)
