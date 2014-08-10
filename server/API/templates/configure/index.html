@@ -464,12 +464,15 @@ $(document).ready(function() {
     var title = $("<div/>").text(data.title).css("font-size", "18px")
         .css("margin-bottom", "5px").css("border-bottom", "1px black solid")
         .css("white-space", "nowrap").css("overflow", "hidden").css("text-overflow", "ellipsis");
-    var current_price = $("<div>Current price: " + data.current_price + "</div>");
-    var list_price = $("<div>List price: " + data.list_price + "</div>");
-    var city = $("<div/>").text("in city " + data.city);
+    var discount_rate = Math.floor((data.current_price / data.list_price) * 100) / 10;
+    var discount_div = $("<div/>").text(discount_rate + "Zhe").css("float", "left").css("width", "45%").css("font-size", "20px");
+    var current_price = $("<div/>").text(data.current_price);
+    var list_price = $("<div/>").html("<s>" + data.list_price + "</s>");
+    var city = $("<div/>").text(data.city);
+    var div = $("<div/>").css("float", "right").css("width", "45%").append(current_price).append(list_price).append(city);
     var link = $("<a/>").attr("href", data.deal_url).attr("target", "_blank");
     var content = $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
-        .append(image).append(title).append(current_price).append(list_price).append(city);
+        .append(image).append(title).append(discount_div).append(div);
     return link.append(content);
   }
 
