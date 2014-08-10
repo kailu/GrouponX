@@ -266,6 +266,13 @@
           createConfiguration(page, page[0]);
           loadConfiguration(page, page[0].id);
         });
+
+        $("#add-configuration-button").off().click(function() {
+          $.getJSON("/api/createconfig?p_id=" + data.data.p_id + "&name=unnamed", function(data) {
+              page.push(data.data);
+              createConfiguration(page, data.data);
+          });
+        });
       });
       return;
     }
@@ -276,14 +283,15 @@
         createConfiguration(page, page[i]);
       }
       loadConfiguration(page, page[0].id);
+
+      $("#add-configuration-button").off().click(function() {
+        $.getJSON("/api/createconfig?p_id=" + data.data[0].id + "&name=unnamed", function(data) {
+            page.push(data.data);
+            createConfiguration(page, data.data);
+        });
+      });
     });  
   });
 
-  $("#add-configuration-button").off().click(function() {
-    $.getJSON("/api/createconfig?p_id=" + config.page + "&name=unnamed", function(data) {
-        page.push(data.data);
-        createConfiguration(page, data.data);
-    });
-  });
 </script>
 {% endblock %}
