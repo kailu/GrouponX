@@ -442,7 +442,8 @@ $(document).ready(function() {
     $("#preview").fadeIn();
     $(".layout-template").remove();
 
-    $.getJSON("/api/getdeals?ip=202.193.16.3", function(data) {
+    var c_id = config.id;
+    $.getJSON("/api/getdeals?ip=202.193.16.3&c_id=" +c_id, function(data) {
       $("#target").append(render_single_layout(data.data[0]).addClass("layout-template"));
       $("#target2").append(render_double_layout(data.data[0], data.data[1]).addClass("layout-template"));
       $("#target3").append(render_double_layout2(data.data[0], data.data[1]).addClass("layout-template"));
