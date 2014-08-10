@@ -48,10 +48,13 @@
   }
 
   .layout-box {
+    overflow: hidden;
     display: inline-block;
     border: 1px black solid;
-    height: 50px;
-    width: 50px;
+    width: 25%;
+    height: 300px;
+    padding: 10px;
+    margin: 10px;
   }
 </style>
 
@@ -110,20 +113,27 @@
     <!-- Layout option -->
     <div class="section">
       <div class="section-header">Layout</div>
-      <div>
-	<span class="radio-box">
-	  <input type="radio" name="layout" value="0">Single
-	</span>
+      <div>Select city to preview: 
+	<select>
+	  <option>Beijing</option>
+	  <option>Shanghai</option>
+	</select>
+	<span id="preview" style="display: none; margin-left: 50px">Updating preview... Please wait.</span>
       </div>
-      <div>
-	<span class="radio-box">
-	  <input type="radio" name="layout" value="1">Multiple
-	</span>
+      <div class="layout-box" id="target">
+	<div class="radio-box">
+	  <input type="radio" name="layout" value="0">Static
+	</div>
       </div>
-      <div>
-	<span class="radio-box">
+      <div class="layout-box" id="target2">
+	<div class="radio-box">
+	  <input type="radio" name="layout" value="1">Fade In/Out
+	</div>
+      </div>
+      <div class="layout-box" id="target3">
+	<div class="radio-box">
 	  <input type="radio" name="layout" value="2">Many
-	</span>
+	</div>
       </div>
     </div>
   </div>
@@ -231,11 +241,13 @@
     $("input[name='layout']").off().change(function(event) {
       config.layout_approach = $(event.currentTarget).val();
 
-      saveConfig(config);
+      saveConfig(config, true);
     });
+
+    update_preview(config);
   }
 
-  function saveConfig(config) {
+  function saveConfig(config, skip_update_preview) {
     $.post("/api/saveconfig", {
       "p_id": config.page,
       "c_id": config.id,
@@ -246,6 +258,10 @@
       "white_list": config.white_list,
       "black_list": config.black_list
     });
+
+    if (!skip_update_preview) {
+      update_preview(config);
+    }
   }
 
   function createConfiguration(page, config) {
@@ -316,5 +332,46 @@
     });  
   });
 
+  function update_preview(config) {
+    $("#preview").fadeIn();
+    $(".layout-template").remove();
+
+    $.getJSON("/api/getdeals?ip=202.193.16.3", function(data) {
+      $("#target").append(render_single_layout(data.data[0]).addClass("layout-template"));
+      $("#target2").append(render_double_layout(data.data[0], data.data[1]).addClass("layout-template"));
+      $("#target3").append(render_double_layout2(data.data[0], data.data[1]).addClass("layout-template"));
+
+      $("#preview").fadeOut();
+    });
+  }
+
+  function render_single_layout(data) {
+    var image = $("<img style='width: 100%'/>").attr("src", data.image_url);
+    var title = $("<div/>").text(data.title).css("font-size", "18px")
+        .css("margin-bottom", "5px").css("border-bottom", "1px black solid")
+        .css("white-space", "nowrap").css("overflow", "hidden").css("text-overflow", "ellipsis");
+    var desc = $("<div/>").text(data.desc).css("font-size", "14px");
+    return $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
+        .append(image).append(title).append(desc);
+  }
+
+  var animation_msec = 4000;
+			  
+  function render_double_layout(data1, data2) {
+    var div1 = render_single_layout(data1);
+    var div2 = render_single_layout(data2).css("position", "absolute").css("left", "0").css("top", "0").css("opacity", "0");
+    div1.animate({opacity: 0}, {duration: animation_msec});
+    div2.animate({opacity: 1}, {duration: animation_msec});
+    return $("<div/>").css("position", "relative").append(div1).append(div2);
+  }
+
+  function render_double_layout2(data1, data2) {
+    var div1 = render_single_layout(data1).css("opacity", "0");
+    var div2 = render_single_layout(data1).css("position", "absolute").css("left", "0").css("top", "0");
+    var div3 = render_single_layout(data2).css("position", "absolute").css("left", "190px").css("top", "0");
+    div2.animate({left: "-190px"}, {duration: animation_msec});
+    div3.animate({left: "0px"}, {duration: animation_msec});
+    return $("<div/>").css("position", "relative").append(div1).append(div2).append(div3);
+  }
 </script>
 {% endblock %}
