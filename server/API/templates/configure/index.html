@@ -9,6 +9,12 @@
   .configuration-box {
     width: 800px;
   }
+
+  .siteid-box {
+    box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.2);
+    padding: 20px;
+    margin: 10px;
+  }
   
   .page-box {
     box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.2);
@@ -50,6 +56,9 @@
 </style>
 
 <div class="configuration-box">
+  <div class="siteid-box">
+    <label style="margin-bottom: 15px">SiteID <font face="verdana" size="2">{{ user.site.hash }}</label>
+  </div>
   <div class="page-box">
     <button id="add-configuration-button" style="margin-bottom: 15px">Add Configuration</button>
   </div>
