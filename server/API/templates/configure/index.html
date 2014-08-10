@@ -107,33 +107,6 @@
 </div>
 
 <script type="text/javascript">
-  var fakeConfig1 = {
-    "bid_strategy": 0,
-    "whitelist": "whitelist_site_1",
-    "blacklist": "",
-    "layout": 0
-  }
-
-  var fakeConfig2 = {
-    "bid_strategy": 0,
-    "whitelist": "whitelist_site_1, whitelist_site_2",
-    "blacklist": "",
-    "layout": 1
-  }
-
-  var fakeConfig3 = {
-    "bid_strategy": 0,
-    "whitelist": "",
-    "blacklist": "blacklist_site_1",
-    "layout": 0
-  }
-
-  var fakePage1 = [
-    {"traffic_percentage": 10.0, "name": "Configuration 1", "bidding_approach": 0, "page": 1, "layout_approach": 0, "white_list": "whitelist_site_1", "id": 0, "black_list": ""},
-    {"traffic_percentage": 20.0, "name": "Configuration 2", "bidding_approach": 1, "page": 1, "layout_approach": 1, "white_list": "", "id": 1, "black_list": ""},
-    {"traffic_percentage": 70.0, "name": "Configuration 3", "bidding_approach": 0, "page": 1, "layout_approach": 2, "white_list": "", "id": 2, "black_list": "blacklist_site_1"}
-  ]
-
   function createPage() {
     var fakeCreatePageResposne = {
       "status": "ok",
@@ -172,11 +145,13 @@
 
   function enableAndSetList(list_name, val) {
     $("input[name='listing'][value='" + list_name + "']").prop("checked", true);
+    $("#" + list_name + " input[type='text']").prop("disabled", false);
     $("#" + list_name + " input[type='text']").val(val);
   }
 
   function disableList(list_name) {
-      $("#" + list_name + " input[type='text']").prop("disabled", true);
+    $("#" + list_name + " input[type='text']").prop("disabled", true);
+    $("#" + list_name + " input[type='text']").val("");
   }
 
   function loadConfig(config) {
@@ -194,16 +169,78 @@
 
     // Select layout
     $("input[name='layout'][value='" + config.layout_approach + "']").prop("checked", true)
+
+    // Bind handlers
+    $("input[name='strategy']").change(function(event) {
+      config.bidding_approach = $(event.currentTarget).val();
+      saveConfig(config);
+    });
+    $("input[name='listing'][value='whitelist']").change(function() {
+      $("#whitelist input[type='text']").prop("disabled", false);
+      $("#blacklist input[type='text']").prop("disabled", true);
+
+      config.white_list = $("#whitelist input[type='text']").val();
+      config.black_list = "";
+
+      saveConfig(config);
+    });
+    $("#whitelist input[type='text']").focusout(function() {
+      config.white_list = $("#whitelist input[type='text']").val();
+      config.black_list = "";
+
+      saveConfig(config);
+    });
+    $("input[name='listing'][value='blacklist']").change(function() {
+      $("#whitelist input[type='text']").prop("disabled", true);
+      $("#blacklist input[type='text']").prop("disabled", false);
+
+      config.white_list = "";
+      config.black_list = $("#blacklist input[type='text']").val();
+
+      saveConfig(config);
+    });
+    $("#blacklist input[type='text']").focusout(function() {
+      config.white_list = "";
+      config.black_list = $("#blacklist input[type='text']").val();
+
+      saveConfig(config);
+    });
+    $("input[name='layout']").change(function(event) {
+      config.layout_approach = $(event.currentTarget).val();
+
+      saveConfig(config);
+    });
   }
 
-  function saveConfig(page, config) {
-
+  function saveConfig(config) {
+    $.post("/api/saveconfig", {
+      "p_id": config.page,
+      "c_id": config.id,
+      "name": config.name,
+      "bidding_approach": config.bidding_approach,
+      "layout_approach": config.layout_approach,
+      "white_list": config.white_list,
+      "black_list": config.black_list
+    });
   }
 
-  function createConfiguration(id, name, traffic) {
-    var configuration = $('<div><span class="radio-box"><input type="radio" name="config" value="' + id + '">' + name + '</span><input type="text" size="3" value="' + traffic + '" style="text-align: center"></div>');
+  function createConfiguration(page, config) {
+    var id = config.id;
+    var name = config.name;
+    var traffic = config.traffic_percentage;
+    var configuration = $('<div><span class="radio-box"><input type="radio" name="config" value="' + id + '"><input class="config_name" type="text" value="' + name + '"></span><input class="percentage" type="text" size="3" value="' + traffic + '" style="text-align: center"></div>');
+    $(".config_name", configuration).focusout(function(event) {
+      config.name = $(event.currentTarget).val();
+      saveConfig(config);
+    });
+    $(".percentage", configuration).focusout(function(event) {
+      config.percentage = $(event.currentTarget).val();
+      saveConfig(config);
+    });
     $(".page-box").append(configuration);
-    configuration.change(function() { loadConfiguration(fakePage1, id); });
+    configuration.change(function() {
+      loadConfiguration(page, id);
+    });
   }
 
   function selectConfiguration(name) {
@@ -220,10 +257,18 @@
     }
   }
 
-  for (var i = 0; i < fakePage1.length; i++) {
-    createConfiguration(fakePage1[i].id, fakePage1[i].name, fakePage1[i].traffic_percentage);
-  }
+  $.getJSON("/api/readpagelist", function(data) {
+    if (data.data.length == 0) {
+      return;
+    }
 
-  loadConfiguration(fakePage1, "0");
+    $.getJSON("/api/readpage?p_id=" + data.data[0].id, function(data) {
+      var page = data.data;
+      for (var i = 0; i < page.length; i++) {
+        createConfiguration(page, page[i]);
+      }
+      loadConfiguration(page, page[0].id);
+    });  
+  });
 </script>
 {% endblock %}
