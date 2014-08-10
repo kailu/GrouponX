@@ -24,7 +24,6 @@ urlpatterns = patterns('',
     # redirect / to index.html
     url(r'^$', views.login_, name='login'),
 
-    url(r'^index/', views.index, name='index'),
     url(r'^configure/', views.configure, name="configure"),
     url(r'^createPageID', views.createPageID, name="createPageID"),
 

@@ -215,6 +215,9 @@ def register(request):
 
 
 def login_(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/api/page')
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -232,7 +235,7 @@ def login_(request):
 
 def logout_(request):
     logout(request)
-    return HttpResponseRedirect('/api/login')
+    return HttpResponseRedirect('/')
 
 
 def login_to_page(request, username, password):
