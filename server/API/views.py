@@ -535,7 +535,7 @@ def serving(request):
             r_number = random.random()
             acc_number = 0.0
             for c in configures:
-                acc_number += c.traffic_percentage
+                acc_number += c.traffic_percentage*1.0/100
                 if acc_number > r_number:
                     #use this configure
                     bidder = _bidderFactory(c, params)
