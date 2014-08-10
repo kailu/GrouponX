@@ -218,6 +218,7 @@
       "p_id": config.page,
       "c_id": config.id,
       "name": config.name,
+      "traffic_percentage": config.traffic_percentage,
       "bidding_approach": config.bidding_approach,
       "layout_approach": config.layout_approach,
       "white_list": config.white_list,
@@ -235,7 +236,7 @@
       saveConfig(config);
     });
     $(".percentage", configuration).focusout(function(event) {
-      config.percentage = $(event.currentTarget).val();
+      config.traffic_percentage = $(event.currentTarget).val();
       saveConfig(config);
     });
     $(".page-box").append(configuration);
