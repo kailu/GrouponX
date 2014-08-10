@@ -232,11 +232,7 @@ def login_(request):
 
 def logout_(request):
     logout(request)
-    return render_to_response(
-        'index.html',
-        {},
-        context_instance=RC(request, {}),
-    )
+    return HttpResponseRedirect('/api/login')
 
 
 def login_to_page(request, username, password):
@@ -247,12 +243,16 @@ def login_to_page(request, username, password):
             print("User is valid, active and authenticated")
             print "domain: ", user.site.domain
             print "u_id", user.id
-            return HttpResponseRedirect('../page/')
+            return HttpResponseRedirect('/api/page/')
         else:
             print("The password is valid, but the account has been disabled!")
+            return HttpResponseRedirect('/api/page/')
+
     else:
         # the authentication system was unable to verify the username and password
         print("The username and password were incorrect.")
+        return HttpResponseRedirect('/api/page/')
+
 
 
 def register(request):
