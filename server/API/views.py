@@ -507,6 +507,8 @@ def _bidderFactory(conf, params):
         return bidders.defaultBidder(conf,params)
     elif conf.bidding_approach == 1:
         return bidders.maxDiscountBidder(conf,params)
+    elif conf.bidding_approach == 2:
+        return bidders.mostExpensiveBidder(conf,params)
     else:
         return None
 
