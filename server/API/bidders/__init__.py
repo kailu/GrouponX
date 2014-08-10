@@ -1,3 +1,3 @@
 
-from  default import defaultBidder
-from  maxdiscount import maxDiscountBidder
+from  default import *
+from  maxdiscount import *

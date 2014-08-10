@@ -517,7 +517,7 @@ def serving(request):
             params = {}
             params['ip'] = ip
             r_number = random.random()
-            acc_number = 0.0f
+            acc_number = 0.0
             for c in configures:
                 acc_number += c.traffic_percentage
                 if acc_number > r_number:

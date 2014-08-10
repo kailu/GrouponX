@@ -1,5 +1,4 @@
-
-
+# -*- coding: utf-8 -*-
 
 import API.dianping as dianping
 import API.baidu as baidu
