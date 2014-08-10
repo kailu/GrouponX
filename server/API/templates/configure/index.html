@@ -6,6 +6,77 @@
 
 {% block content %}
 <style>
+
+/*  bhoechie tab */
+div.bhoechie-tab-container{
+  z-index: 10;
+  background-color: #ffffff;
+  padding: 0 !important;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  border:1px solid #ddd;
+  margin-top: 20px;
+  margin-left: 50px;
+  -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  -moz-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  background-clip: padding-box;
+  opacity: 0.97;
+  filter: alpha(opacity=97);
+}
+div.bhoechie-tab-menu{
+  padding-right: 0;
+  padding-left: 0;
+  padding-bottom: 0;
+}
+div.bhoechie-tab-menu div.list-group{
+  margin-bottom: 0;
+}
+div.bhoechie-tab-menu div.list-group>a{
+  margin-bottom: 0;
+}
+div.bhoechie-tab-menu div.list-group>a .glyphicon,
+div.bhoechie-tab-menu div.list-group>a .fa {
+  color: #356BA7;
+}
+div.bhoechie-tab-menu div.list-group>a:first-child{
+  border-top-right-radius: 0;
+  -moz-border-top-right-radius: 0;
+}
+div.bhoechie-tab-menu div.list-group>a:last-child{
+  border-bottom-right-radius: 0;
+  -moz-border-bottom-right-radius: 0;
+}
+div.bhoechie-tab-menu div.list-group>a.active,
+div.bhoechie-tab-menu div.list-group>a.active .glyphicon,
+div.bhoechie-tab-menu div.list-group>a.active .fa{
+  background-color: #356BA7;
+  background-image: #356BA7;
+  color: #ffffff;
+}
+div.bhoechie-tab-menu div.list-group>a.active:after{
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  margin-top: -13px;
+  border-left: 0;
+  border-bottom: 13px solid transparent;
+  border-top: 13px solid transparent;
+  border-left: 10px solid #356BA7;
+}
+
+div.bhoechie-tab-content{
+  background-color: #ffffff;
+  /* border: 1px solid #eeeeee; */
+  padding-left: 20px;
+  padding-top: 10px;
+}
+
+div.bhoechie-tab div.bhoechie-tab-content:not(.active){
+  display: none;
+}
+
   .configuration-box {
     width: 800px;
   }
@@ -60,8 +131,8 @@
 
 <div class="container">
 	<div class="row">
-        <div class="col-lg-5 col-md-5 col-sm-8 col-xs-9 bhoechie-tab-container">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 bhoechie-tab-menu">
+        <div class="col-lg-10 col-md-5 col-sm-8 col-xs-9 bhoechie-tab-container">
+            <div class="col-lg-1 col-md-3 col-sm-3 col-xs-3 bhoechie-tab-menu">
               <div class="list-group">
                 <a href="#" class="list-group-item active text-center">
                   <h4 class=""></h4><br/>untilted page
@@ -74,86 +145,86 @@
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 bhoechie-tab">
                 <!-- flight section -->
                 <div class="bhoechie-tab-content active">
-<div class="configuration-box">
-  <div class="siteid-box">
-    <label style="margin-bottom: 15px">SiteID <font face="verdana" size="2">{{ user.site.hash }}</label>
-  </div>
-  <div class="page-box">
-    <button id="add-configuration-button" style="margin-bottom: 15px">Add Configuration</button>
-  </div>
+                    <div class="configuration-box">
+                      <div class="siteid-box">
+                        <label style="margin-bottom: 15px">SiteID <font face="verdana" size="2">{{ user.site.hash }}</label>
+                      </div>
+                      <div class="page-box">
+                        <button id="add-configuration-button" style="margin-bottom: 15px">Add Configuration</button>
+                      </div>
 
-  <div class="config-box">
-    <!-- Bid strategy -->
-    <div class="section">
-      <div class="section-header">Bid Strategy</div>
-      <div>
-	<span class="radio-box">
-	  <input type="radio" name="strategy" value="0">Default
-	  Bidding Strategy, location based.
-	</span>
-      </div>
-      <div>
-	<span class="radio-box">
-	  <input type="radio" name="strategy" value="1">Max Discount
-	  Bidding Strategy, Coupons will be sorted based the order of
-	  discount value.
-	</span>
-      </div>
-      <div>
-	<span class="radio-box">
-	  <input type="radio" name="strategy" value="2">Most Expensive
-	  Bidding Strategy, Coupons will be sorted based the selling
-	  price.
-	</span>
-      </div>
+                      <div class="config-box">
+                        <!-- Bid strategy -->
+                        <div class="section">
+                          <div class="section-header">Bid Strategy</div>
+                          <div>
+                        <span class="radio-box">
+                          <input type="radio" name="strategy" value="0">Default
+                          Bidding Strategy, location based.
+                        </span>
+                          </div>
+                          <div>
+                        <span class="radio-box">
+                          <input type="radio" name="strategy" value="1">Max Discount
+                          Bidding Strategy, Coupons will be sorted based the order of
+                          discount value.
+                        </span>
+                          </div>
+                          <div>
+                        <span class="radio-box">
+                          <input type="radio" name="strategy" value="2">Most Expensive
+                          Bidding Strategy, Coupons will be sorted based the selling
+                          price.
+                        </span>
+                          </div>
 
-    </div>
+                        </div>
 
-    <!-- Black/White list -->
-    <div class="section">
-      <div class="section-header">Site control</div>
-      <div id="whitelist">
-	<span class="radio-box">
-	  <input type="radio" name="listing" value="whitelist">Whitelist
-	</span>
-	<input type="text" size="120">
-      </div>
-      <div id="blacklist">
-	<span class="radio-box">
-	  <input type="radio" name="listing" value="blacklist">Blacklist
-	</span>
-	<input type="text" size="120 disabled">
-      </div>
-    </div>
+                        <!-- Black/White list -->
+                        <div class="section">
+                          <div class="section-header">Site control</div>
+                          <div id="whitelist">
+                        <span class="radio-box">
+                          <input type="radio" name="listing" value="whitelist">Whitelist
+                        </span>
+                        <input type="text" size="120">
+                          </div>
+                          <div id="blacklist">
+                        <span class="radio-box">
+                          <input type="radio" name="listing" value="blacklist">Blacklist
+                        </span>
+                        <input type="text" size="120 disabled">
+                          </div>
+                        </div>
 
-    <!-- Layout option -->
-    <div class="section">
-      <div class="section-header">Layout</div>
-      <div>Select city to preview: 
-	<select>
-	  <option>Beijing</option>
-	  <option>Shanghai</option>
-	</select>
-	<span id="preview" style="display: none; margin-left: 50px">Updating preview... Please wait.</span>
-      </div>
-      <div class="layout-box" id="target">
-	<div class="radio-box">
-	  <input type="radio" name="layout" value="0">Static
-	</div>
-      </div>
-      <div class="layout-box" id="target2">
-	<div class="radio-box">
-	  <input type="radio" name="layout" value="1">Fade In/Out
-	</div>
-      </div>
-      <div class="layout-box" id="target3">
-	<div class="radio-box">
-	  <input type="radio" name="layout" value="2">Many
-	</div>
-      </div>
-    </div>
-  </div>
-</div>
+                        <!-- Layout option -->
+                        <div class="section">
+                          <div class="section-header">Layout</div>
+                          <div>Select city to preview:
+                        <select>
+                          <option>Beijing</option>
+                          <option>Shanghai</option>
+                        </select>
+                        <span id="preview" style="display: none; margin-left: 50px">Updating preview... Please wait.</span>
+                          </div>
+                          <div class="layout-box" id="target">
+                        <div class="radio-box">
+                          <input type="radio" name="layout" value="0">Static
+                        </div>
+                          </div>
+                          <div class="layout-box" id="target2">
+                        <div class="radio-box">
+                          <input type="radio" name="layout" value="1">Fade In/Out
+                        </div>
+                          </div>
+                          <div class="layout-box" id="target3">
+                        <div class="radio-box">
+                          <input type="radio" name="layout" value="2">Many
+                        </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
 
             </div>
@@ -164,6 +235,17 @@
 
 
 <script type="text/javascript">
+$(document).ready(function() {
+    $("div.bhoechie-tab-menu>div.list-group>a").click(function(e) {
+        e.preventDefault();
+        $(this).siblings('a.active').removeClass("active");
+        $(this).addClass("active");
+        var index = $(this).index();
+        $("div.bhoechie-tab>div.bhoechie-tab-content").removeClass("active");
+        $("div.bhoechie-tab>div.bhoechie-tab-content").eq(index).addClass("active");
+    });
+});
+
   function createPage() {
     var fakeCreatePageResposne = {
       "status": "ok",
