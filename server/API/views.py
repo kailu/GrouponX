@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django import conf
 from django.contrib.auth import authenticate,login,logout
 
 from django.shortcuts import render
@@ -38,6 +39,7 @@ def createConfigure(request):
     response_data['status'] = 'ok'
     if request.method == 'GET':
         page_id = request.GET.get('p_id', None)
+        config_name = request.GET.get('name', None)
 
         if page_id == None:
             response_data['status'] = 'no'
@@ -45,6 +47,7 @@ def createConfigure(request):
         else:
             p = models.PageEntity.objects.get(pk=page_id)
             c = models.ConfigEntity(page = p,
+                                    name = config_name,
                                     black_list = '',
                                     white_list = '',
                                     traffic_percentage = 0,
@@ -213,18 +216,8 @@ def login_(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                print("User is valid, active and authenticated")
-                print "domain: ", user.site.domain
-                return HttpResponseRedirect('../page/')
-            else:
-                print("The password is valid, but the account has been disabled!")
-        else:
-            # the authentication system was unable to verify the username and password
-            print("The username and password were incorrect.")
+        return login_to_page(request, username, password)
+
     else:
         form = AuthenticationForm()
         return render_to_response(
@@ -242,6 +235,23 @@ def logout_(request):
         context_instance=RC(request, {}),
     )
 
+
+def login_to_page(request, username, password):
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            print("User is valid, active and authenticated")
+            print "domain: ", user.site.domain
+            print "u_id", user.id
+            return HttpResponseRedirect('../page/')
+        else:
+            print("The password is valid, but the account has been disabled!")
+    else:
+        # the authentication system was unable to verify the username and password
+        print("The username and password were incorrect.")
+
+
 def register(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -251,24 +261,16 @@ def register(request):
 
         new_user = User.objects.create_user(username, '', password)
 
+        # create hash for new user
         hasher = hashlib.md5()
         hasher.update(username + domain)
         h = hasher.hexdigest()
         site = Site(user=new_user, hash=h, domain=domain)
         site.save()
         new_user.save()
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                print("User is valid, active and authenticated")
-                print "domain: ", user.site.domain
-                return HttpResponseRedirect('../page/')
-            else:
-                print("The password is valid, but the account has been disabled!")
-        else:
-            # the authentication system was unable to verify the username and password
-            print("The username and password were incorrect.")
+
+        return login_to_page(request, username, password)
+
     else:
         form = RegistrationForm()
         return render_to_response(
@@ -320,6 +322,7 @@ def createPage(request):
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
+@login_required(login_url='/api/login/')
 def readPage(request):
     """
     
@@ -329,15 +332,32 @@ def readPage(request):
     response_data = {}
     response_data['status'] = 'ok'
     p_id = request.GET.get('p_id',None)
+
+    print "readPage - p_id: ", p_id
+
     if p_id != None:
         d = []
-        configs = models.ConfigEntity.objects.filter(page=p_id)
+        page = models.PageEntity.objects.get(pk=p_id)
+        configs = models.ConfigEntity.objects.filter(page=page)
         for c in configs:
             d.append(model_to_dict(c))
         response_data['data'] = d
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
+
+@login_required(login_url='/api/login/')
+def readPageList(request):
+    print 'readPageList - uid: ', request.user.id
+    response_data = {}
+    response_data['status'] = 'ok'
+    d = []
+    pages = models.PageEntity.objects.filter(user=request.user)
+    for p in pages:
+        d.append(model_to_dict(p))
+    response_data['data'] = d
+
+    return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 def testAPI(request):
