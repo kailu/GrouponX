@@ -24,6 +24,7 @@ import json
 import models
 from django.forms.models import model_to_dict
 import random
+import bidders
 
 def index(request):
     return HttpResponse("hello, world!")
@@ -458,7 +459,7 @@ def _bidderFactory(conf, params):
     if conf.bidding_approach == 0:
         return bidders.defaultBidder(conf,params)
     elif conf.bidding_approach == 1:
-        pass
+        return bidders.maxDiscountBidder(conf,params)
     else:
         return None
 
