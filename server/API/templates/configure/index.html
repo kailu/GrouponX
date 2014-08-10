@@ -465,10 +465,10 @@ $(document).ready(function() {
         .css("margin-bottom", "5px").css("border-bottom", "1px black solid")
         .css("white-space", "nowrap").css("overflow", "hidden").css("text-overflow", "ellipsis");
     var discount_rate = Math.floor((data.current_price / data.list_price) * 100) / 10;
-    var discount_div = $("<div/>").text(discount_rate + "Zhe").css("float", "left").css("width", "45%").css("font-size", "20px");
-    var current_price = $("<div/>").text(data.current_price);
-    var list_price = $("<div/>").html("<s>" + data.list_price + "</s>");
-    var city = $("<div/>").text(data.city);
+    var discount_div = $("<div/>").text(discount_rate + "折").css("float", "left").css("width", "45%").css("font-size", "26px");
+    var current_price = $("<div/>").text("现价:"+data.current_price);
+    var list_price = $("<div/>").html("原价:<s>" + data.list_price + "</s>");
+    var city = $("<div/>").text("城市:"+data.city);
     var div = $("<div/>").css("float", "right").css("width", "45%").append(current_price).append(list_price).append(city);
     var link = $("<a/>").attr("href", data.deal_url).attr("target", "_blank");
     var content = $("<div/>").css("display", "inline-block").css("width", "160px").css("margin", "10px")
